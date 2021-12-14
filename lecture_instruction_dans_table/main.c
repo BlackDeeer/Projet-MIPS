@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "../fonctions/header/lecture_fichier.h"
+#include "../fonctions/header/conversion.h"
 
 /* Fonction qui permet de découper un string en tableau d'éléments (séparés par " " et "\n") */
 void parseData(char * dataTxt, char * data []){
@@ -16,15 +17,6 @@ void parseData(char * dataTxt, char * data []){
 }
 
 
-/* TODO #1 : Fonction nombre vers bianaire dans le bon sens et str vers dec aussi*/
-void int2bin(int n, char bin[]){
-	int i=0;
-	while (n>0){
-		bin[i] = n%2;
-		n/=2;
-		i ++;
-	}
-}
 
 
 int main()
@@ -52,7 +44,9 @@ int main()
 	printf("registre sourcce : $%d\n",data[2][1]-48); /* Valeur du registre source */
 	printf("valeur immediate : %s\n",data[3]); /* Valeur immediate */
 
-	
+	int binary [5];
+	int_to_binary(13,5,binary);
+	printf("%s",binary);
 
 	return(0);
 }

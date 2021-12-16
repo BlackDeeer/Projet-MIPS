@@ -2,12 +2,12 @@
 #include <stdlib.h>
 
 
-/* fonction de conversion d'un entier vers un binaire */
+/* fonction de conversion d'un entier vers un binaire / probleme conversion */
 void int_to_binary( int x, int lengh, int binary[] ){
 	
 	int i = 0;
 	
-	for(i=lengh; i >= 0 ;i--)    
+	for(i=lengh-1; i >= 0 ;i--)    
 	{    
 		if( x > 0)
 		{
@@ -18,5 +18,10 @@ void int_to_binary( int x, int lengh, int binary[] ){
 		{
 			binary[i] = 0;
 		}
+
 	}  
 }
+
+/* TODO #2 Conversion bin vers hexa*/
+
+

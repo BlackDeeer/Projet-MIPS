@@ -1,4 +1,4 @@
-FLAGS = -Wall -pedantic -ansi -lm
+FLAGS = -g -Wall -pedantic -ansi -lm
 CC = gcc
 OBJDIR = ../fonctions/obj/
 SRCDIR = ../fonctions/sources/
@@ -8,7 +8,7 @@ OBJ = lecture_fichier.o conversion.o
 OBJFCT = $(OBJDIR)lecture_fichier.o $(OBJDIR)conversion.o
 
 all: main.o $(OBJ)
-	$(CC) main.o $(OBJFCT) $(FLAGS) -o exec
+	$(CC) -g main.o $(OBJFCT) $(FLAGS) -o exec
 
 main.o: main.c $(HDRDIR)lecture_fichier.h
 	$(CC) $(FLAGS) -c $< -o $@

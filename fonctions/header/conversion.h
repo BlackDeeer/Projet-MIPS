@@ -4,6 +4,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-void int_to_binary( int x, int lengh, int binary[] );
+void int_to_binary( int x, int length, int binary[]);
 
 #endif

@@ -5,7 +5,7 @@
     On récupère une instruction MIPS : "ADD $1 $2 $3"
     Elle est au format string
 
-    - On va découper le string en plusieurs parties comme ceci :
+     On va découper le string en plusieurs parties comme ceci :
 
         `*data* = ["ADD","$1","$2","$3"]`
     

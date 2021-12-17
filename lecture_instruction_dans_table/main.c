@@ -23,7 +23,7 @@ int main()
 {
 	char instru[] = "BEQ $3 $2 20"; /* Instrction qui sera récupérée dans un fichier*/
 
-	char tableTxt[10000]; /* table d'instruction en string */
+	char tableTxt[100000]; /* table d'instruction en string */
 	
 	char *data[4]; /*Tableau qui va contenir les différents éléments de l'instruction : ["ADDI","$1","$2","$3"] */
 	
@@ -46,29 +46,38 @@ int main()
 	/* On recupere l'instruction dans l'opération */
 	instruction = data[0];
 
-	for (k=0 ; (strcmp(table[k],instruction)!=0) & (table[k]!=NULL) ; k+=3); /* Recherche de la ligne correspondant à l'opération */
+	for (k=0 ; (strcmp(table[k],instruction)!=0) & (table[k]!=NULL) ; k+=6); /* Recherche de la ligne correspondant à l'opération */
 	
 	/* On récupere dans la table des instructions les valeurs suivantes : */
 	opcode = table[k+1];
 	type_instruction = table[k+2][0];
 	
-	
+	printf("%s\n",instruction);
 	if (type_instruction == 'I'){ /* OPE $rd, $rs, imm*/
 		
-		int op1 = atoi(data[1]+1); /* rd sans "$" */
-		int op2 = atoi(data[2]+1); /* rs sans "$" */
-		int op3 = atoi(data[3]); /* val imm */
+
+		int op[3];
+		int bin_op[3];
+		int i = 0; 
+		for (i=0;i<3;i++){
+			switch(table[k+3+i][0]){
+				case ('r') : op[i] = atoi(data[i]+1); break;
+				case ('i') : op[i] = atoi(data[i]); break;
+				case ('0') : op[i] = 0; break;
+			} 
+			
+
+		}
 
 		int bin_op1[5];
 		int bin_op2[5];
 		int bin_op3[16];
 		
 		int bin_operation[32]; /* opération complete en binaire */
-		int i = 0; /* index de concaténation */
 
-		int_to_binary(op1,5,bin_op1);
-		int_to_binary(op2,5,bin_op2);
-		int_to_binary(op3,16,bin_op3);
+		int_to_binary(op[0],5,bin_op1);
+		int_to_binary(op[1],5,bin_op2);
+		int_to_binary(op[2],16,bin_op3);
 
 
 		/* CONCATENATION */

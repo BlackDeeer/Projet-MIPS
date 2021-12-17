@@ -7,9 +7,9 @@
 
     - On va découper le string en plusieurs parties comme ceci :
 
-        <span style="color='blue'">*data*</span> = ["ADD","$1","$2","$3"]
+        `*data* = ["ADD","$1","$2","$3"]`
     
-    <span style="color='blue'">*data*</span> est un tableau de pointeurs ou chaque pointeur correspond à la chaine de caractère découpée.
+    `*data*` est un tableau de pointeurs ou chaque pointeur correspond à la chaine de caractère découpée.
 
     - On va ensuite chercher l'opération data[0] <=> "ADD" dans une **table**
 

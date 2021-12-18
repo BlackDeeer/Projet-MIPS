@@ -21,21 +21,25 @@ void parseData(char * dataTxt, char * data []){
 
 int main()
 {
-	char instru[] = "ADD $1 $2 $3"; /* Instrction qui sera récupérée dans un fichier*/
+	char instru[] = "LW $3 54(2)"; /* Instrction qui sera récupérée dans un fichier*/
 
 	char tableTxt[10000]; /* table d'instruction en string */
 	
 	char *data[4]; /*Tableau qui va contenir les différents éléments de l'instruction : ["ADDI","$1","$2","$3"] */
 	
-	char *table[142]; /*Tableau qui va contenir toute la table d'instruction séparées par des retours à la ligne */
+	char *table[156]; /*Tableau qui va contenir toute la table d'instruction séparées par des retours à la ligne */
 
 	int k=0; /* k : index de l'opération de l'instruction trouvé dans la table */
 
-	char * instruction;
+	char * instruction; /* va contenir l'instruction "ADD" par exemple */
 
-	char * opcode;
+	char * opcode; /* va contenir l'opcode trouvé correspondant à l'instruction dans la table */
 	char type_instruction;
 
+	int bin_operation[32]; /* opération complete en binaire */
+
+	int i = 0; /* compteur qui avance dans les opérandes prévues dans la table */
+	int j = 0; /* compteur qui va avancer dans les opérandes de l'instruction*/
 	
 	lecture_fichier("table_instructions.txt",tableTxt); /* Stocke la table d'instruction */
 
@@ -53,10 +57,8 @@ int main()
 	type_instruction = table[k+2][0];
 	
 	
-	int bin_operation[32]; /* opération complete en binaire */
 	
-	int i = 0; /* compteur qui avance dans les opérandes prévues dans la table */
-	int j = 0; /* compteur qui va avancer dans les opérandes de l'instruction*/
+
 
 
 
@@ -64,7 +66,7 @@ int main()
 
 		int *bin_op[3];
 		int op[3];
-
+		char * split;
 		for (i=0;i<3;i++){
 			int * bin_op_temp = NULL;
 			int bin_taille;
@@ -81,6 +83,15 @@ int main()
 					op[i] = 0; /* ça implique aussi qu'on avance en opérandes prévues par la table mais pas pour celle de l'instruction */
 					bin_taille = 5;
 					break; 
+				case ('b') :
+					split = strtok(data[2],"()");
+					op[i] = split[2]-48;
+					bin_taille = 5;
+					break;
+				case ('o') :
+					op[i] = split[0]-48;
+					bin_taille = 16;
+					break;
 			} 
 			
 			bin_op_temp = (int *) malloc(bin_taille * sizeof(int));
@@ -109,8 +120,10 @@ int main()
 			printf("%d",bin_operation[i]);
 		}
 		printf("\n");
+
+
 	}
-	else if (type_instruction == 'R'){ /* OPE $rd, $rs, imm*/
+	else if (type_instruction == 'R'){ /* OPE $rd, $rs1, $rs2*/
 
 		char special[] = "000000";
 		int *bin_op[4];
@@ -162,8 +175,33 @@ int main()
 			printf("%d",bin_operation[i]);
 		}
 		printf("\n");
+
+
 	}
-	
+	else if (type_instruction == 'J'){ /* OPE instr_index*/
+
+		int * bin_instr_index = NULL;
+		bin_instr_index = (int *) malloc(26 * sizeof(int));
+		int_to_binary(atoi(data[1]),26,bin_instr_index);
+		
+		
+		/* CONCATENATION */
+		
+	    for(i=0;i<32;i++) {
+			if (i<6){
+				bin_operation[i] = opcode[i]-48;
+			}
+			else {
+				bin_operation[i] = bin_instr_index[i-6];
+			}	
+
+			printf("%d",bin_operation[i]);
+		}
+		printf("\n");
+
+
+	}
+
 
 	return(0);
 }

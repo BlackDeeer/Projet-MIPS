@@ -4,8 +4,8 @@ BGTZ 000111 I r1 0 i -
 BLEZ 000110 I r1 0 i -
 BNE 000101 I r1 r2 i -
 LUI 001111 I 0 r1 i -
-LW 100011 B b r i -
-SW 101011 B b r i -
+LW 100011 I b r1 o -
+SW 101011 I b r1 o -
 ADD 100000 R r2 r3 r1 0
 AND 100100 R r2 r3 r1 0
 DIV 011010 R r1 r2 0 0
@@ -18,4 +18,6 @@ SLL 000000 R 0 r2 r1 r3
 SLT 101010 R r2 r3 r1 0
 SUB 100010 R r2 r3 r1 0
 XOR 100110 R r2 r3 r1 0
+JAL 000011 J - - - -
+J 000010 J - - - -
 \0

@@ -38,13 +38,17 @@ Elle est au format string
 
             | 000000 | r2 | r3 | r1 | 0 | 100000 |
 
-        - rX signifie que c'est la place du Xième registre de l'instruction, ici :
+        - `rX` signifie que c'est la place du Xième registre de l'instruction, ici :
 
                 r1 <=> "$1"     r2 <=> "$2"     r3 <=> "$3"
             (On prendra bien sur que les entières derrière le "$")
 
 
-        - 0 signie qu'on aura un vecteur de 5 bits nuls : `"00000"`
+        - `0` signie qu'on aura un vecteur de 5 bits nuls : `"00000"`
+
+        - `b` signifie qu'une partie de l'instruction est sous la forme `offset(base)` on va isoler la base de l'offset
+
+        - `o` on utilise la précédente découpe pour placer l'offset
 
     - on a finalement :
 

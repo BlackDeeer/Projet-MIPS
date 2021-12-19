@@ -23,11 +23,11 @@ void int_to_binary( int x, int length, int binary[] ){
 
 /* fonction de conversion d'un nombre binaire vers un nombre hexadecimal*/
 
-void bin_to_hexa(int lengh, int bin_operation[], char hexa_operation[8] )
+void bin_to_hexa(int length, int bin_operation[], char hexa_operation[8] )
 {	
 	int i, j, k, hexa, pow_bin;
 	k = 7;
-	for(j = lengh - 1 ; j >= 0; j = j - 4)
+	for(j = length - 1 ; j >= 0; j = j - 4)
 	{
 		pow_bin = 0;
 		/* On sépare en bloc de 4 bits et on calcule la valeur décimale du bloc de 4 bits */

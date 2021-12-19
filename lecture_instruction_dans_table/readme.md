@@ -54,11 +54,11 @@ Elle est au format string
 
             | 000000 | 2 | 3 | 1 | 0 | 100000 |
 
-- Le programme effectue  cette lecture et convertit tout en bianire :
+- Le programme effectue  cette lecture et convertit tout en binaire :
 
     `0b0000000001000011000010000010000`
 
-- Pour enfin donner et hexa :
+- Pour enfin donner en hexadécimal :
 
     `0x00430820`
 

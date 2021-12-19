@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <string.h>
-#include "../fonctions/header/lecture_fichier.h"
+#include "../fonctions/header/fichier.h"
 #include "../fonctions/header/conversion.h"
 
 /* Fonction qui permet de découper un string en tableau d'éléments (séparés par " " et "\n") */
@@ -21,7 +21,7 @@ void parseData(char * dataTxt, char * data []){
 
 int main()
 {
-	char instru[] = "ADDI $2,$0,5"; /* Instrction qui sera récupérée dans un fichier LW $3 54(2)*/
+	char instru[] = "ADDI $2 $0 5"; /* Instrction qui sera récupérée dans un fichier LW $3 54(2) ADDI $2,$0,5 */
 
 	char tableTxt[10000]; /* table d'instruction en string */
 	
@@ -39,6 +39,7 @@ int main()
 	int bin_operation[32]; /* opération complète en binaire */
 
 	char hexa_operation[8]; /* opération complète en hexadécimal */
+
 
 	int i = 0; /* compteur qui avance dans les opérandes prévues dans la table */
 	int j = 0; /* compteur qui va avancer dans les opérandes de l'instruction*/
@@ -204,6 +205,25 @@ int main()
 	/* On traduit le résultat binaire en hexadécimal */
 	bin_to_hexa(32,bin_operation,hexa_operation);
 	printf("\n0x%s\n",hexa_operation);
+
+	/* Il faut stocker les résultats en hexadécimal dans un tableau pour pouvoir l'utiliser pour écrire dans le fichier txt final */
+	int nb_instruction = 2;
+	char** tableauHexa = NULL;
+
+	tableauHexa = malloc(nb_instruction * sizeof(char*));
+	char *valeur0 = malloc(8);
+	char *valeur1 = malloc(8);
+	
+	valeur0 = "73039000";
+	valeur1 = "730391BA";
+	tableauHexa[0] = valeur0;
+
+   	tableauHexa[1] = valeur1 ;
+
+	tableauHexa[nb_instruction] = '\0';
+
+	ecriture_fichier("resultat_hexa",tableauHexa,nb_instruction);
+
 
 	return(0);
 }

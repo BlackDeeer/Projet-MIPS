@@ -24,3 +24,25 @@ void lecture_fichier(char * nom_du_fichier, char * data){
 	/*Fermeture*/
 	fclose(donnees);
 }
+
+void ecriture_fichier(char nomFichier[], char **tableauHexa, int taille) {
+	int i;
+	FILE * resultats;
+	
+	/*Ouverture en écriture*/
+	resultats = fopen( nomFichier, "w");
+
+	/*Gestion d'erreurs à l'ouverture*/
+	if (resultats == NULL)  {
+		perror("Probleme lors de l'ouverture du fichier pour l'écriture\n");
+		exit(EXIT_FAILURE);
+	}
+
+	/*Ecriture du tableau dans le fichier*/
+	for (i=0; i<taille; i++) {
+		fprintf(resultats, "%s\n", tableauHexa[i]);
+	}
+
+	/*Fermeture*/
+	fclose(resultats);
+}

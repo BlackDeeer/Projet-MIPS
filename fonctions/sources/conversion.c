@@ -21,6 +21,54 @@ void int_to_binary( int x, int length, int binary[] ){
 	}  
 }
 
-/* TODO #2 Conversion bin vers hexa*/
+/* fonction de conversion d'un nombre binaire vers un nombre hexadecimal*/
 
+void bin_to_hexa(int lengh, int bin_operation[], char hexa_operation[8] )
+{	
+	int i, j, k, hexa, pow_bin;
+	k = 7;
+	for(j = lengh - 1 ; j >= 0; j = j - 4)
+	{
+		pow_bin = 0;
+		/* On sépare en bloc de 4 bits et on calcule la valeur décimale du bloc de 4 bits */
+		for( i = j; i > j - 4 && i >= 0 ; i--)
+		{
+			hexa += bin_operation[i] * pow(2,pow_bin);
+			pow_bin ++;
+		}
+		pow_bin = 0;
 
+		/* On affecte une valeur en hexadécimal en fonction du résultat précédent */
+		if ( hexa <= 9)
+		{
+			hexa_operation[k] = hexa +'0' ;
+		}
+		else
+		{
+			switch(hexa)
+			{
+				case 10:
+					hexa_operation[k] = 'A';
+					break;
+				case 11:
+					hexa_operation[k] = 'B';
+					break;
+				case 12:
+					hexa_operation[k] = 'C';
+					break;
+				case 13:
+					hexa_operation[k] = 'D';
+					break;
+				case 14:
+					hexa_operation[k] = 'E';
+					break;
+				case 15:
+					hexa_operation[k] = 'F';
+					break;
+			}
+		}
+		hexa = 0;
+		k--;
+		
+	}
+}

@@ -21,7 +21,7 @@ void parseData(char * dataTxt, char * data []){
 
 int main()
 {
-	char instru[] = "LW $3 54(2)"; /* Instrction qui sera récupérée dans un fichier*/
+	char instru[] = "ADDI $2,$0,5"; /* Instrction qui sera récupérée dans un fichier LW $3 54(2)*/
 
 	char tableTxt[10000]; /* table d'instruction en string */
 	
@@ -36,7 +36,9 @@ int main()
 	char * opcode; /* va contenir l'opcode trouvé correspondant à l'instruction dans la table */
 	char type_instruction;
 
-	int bin_operation[32]; /* opération complete en binaire */
+	int bin_operation[32]; /* opération complète en binaire */
+
+	char hexa_operation[8]; /* opération complète en hexadécimal */
 
 	int i = 0; /* compteur qui avance dans les opérandes prévues dans la table */
 	int j = 0; /* compteur qui va avancer dans les opérandes de l'instruction*/
@@ -57,9 +59,6 @@ int main()
 	type_instruction = table[k+2][0];
 	
 	
-	
-
-
 
 
 	if (type_instruction == 'I'){ /* OPE $rd, $rs, imm*/
@@ -202,6 +201,9 @@ int main()
 
 	}
 
+	/* On traduit le résultat binaire en hexadécimal */
+	bin_to_hexa(32,bin_operation,hexa_operation);
+	printf("\n0x%s\n",hexa_operation);
 
 	return(0);
 }

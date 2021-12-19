@@ -84,12 +84,14 @@ int main()
 					bin_taille = 5;
 					break; 
 				case ('b') :
+				printf("%s\n",data[2]);
 					split = strtok(data[2],"()");
-					op[i] = split[2]-48;
+					split = strtok(NULL,"()");
+					op[i] = atoi(split);
 					bin_taille = 5;
 					break;
 				case ('o') :
-					op[i] = split[0]-48;
+					op[i] = atoi(data[2]);
 					bin_taille = 16;
 					break;
 			} 

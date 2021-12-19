@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 
 /* fonction de conversion d'un entier vers un binaire / probleme conversion */
@@ -23,9 +24,10 @@ void int_to_binary( int x, int length, int binary[] ){
 
 /* fonction de conversion d'un nombre binaire vers un nombre hexadecimal*/
 
-void bin_to_hexa(int length, int bin_operation[], char hexa_operation[8] )
+void bin_to_hexa(int length, int bin_operation[], char hexa_operation[] )
 {	
 	int i, j, k, hexa, pow_bin;
+	hexa = 0;
 	k = 7;
 	for(j = length - 1 ; j >= 0; j = j - 4)
 	{
@@ -71,4 +73,5 @@ void bin_to_hexa(int length, int bin_operation[], char hexa_operation[8] )
 		k--;
 		
 	}
+	hexa_operation[8] = '\0';
 }

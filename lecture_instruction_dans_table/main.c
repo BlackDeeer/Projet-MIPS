@@ -21,7 +21,7 @@ void parseData(char * dataTxt, char * data []){
 
 int main()
 {
-	char instru[] = "ADDI $2 $0 5"; /* Instrction qui sera récupérée dans un fichier LW $3 54(2) ADDI $2,$0,5 */
+	char instru[] = "BGTZ $2 54"; /* Instrction qui sera récupérée dans un fichier LW $3 54(2) ADDI $2,$0,5 */
 
 	char tableTxt[10000]; /* table d'instruction en string */
 	
@@ -74,6 +74,7 @@ int main()
 				case ('r') : 
 					op[i] = atoi(data[table[k+3+i][1]-48]+1);
 					bin_taille = 5;
+					++j;
 					break;
 				case ('i') : 
 					op[i] = atoi(data[++j]); 

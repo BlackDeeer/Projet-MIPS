@@ -17,7 +17,7 @@ void lecture_fichier(char * nom_du_fichier, char * data){
 	
 	/*Lecture jusqu'a la fin du fichier*/
 	while(!feof(donnees)) {
-		fscanf(donnees, "%c", &data[i]);
+		fscanf(donnees, "%c", &data[i]); 
 		i++;
 	}
 
@@ -26,8 +26,8 @@ void lecture_fichier(char * nom_du_fichier, char * data){
 }
 
 void ecriture_fichier(char nomFichier[], char **tableauHexa, int taille) {
-	int i;
-	FILE * resultats;
+	int i = 0;
+	FILE * resultats; 
 	
 	/*Ouverture en écriture*/
 	resultats = fopen( nomFichier, "w");
@@ -39,8 +39,10 @@ void ecriture_fichier(char nomFichier[], char **tableauHexa, int taille) {
 	}
 
 	/*Ecriture du tableau dans le fichier*/
-	for (i=0; i<taille; i++) {
+	while (tableauHexa[i] != NULL) 
+	{
 		fprintf(resultats, "%s\n", tableauHexa[i]);
+		i++;
 	}
 
 	/*Fermeture*/

@@ -4,31 +4,26 @@
 #include "../fonctions/header/conversion.h"
 
 /* Fonction qui permet de découper un string en tableau d'éléments (séparés par " " et "\n") */
-void parseData(char * dataTxt, char * data []){
+void decoupage_data(char * dataTxt, char * data [], char * separateurs){
 	char *elements;
 	int i = 0;
-	elements = strtok(dataTxt,"\r\n ");
+	/*On cherche à récupérer, un à un, tous les mots de notre fichier texte compris entre les séparateurs et on commence par le premier.*/
+	elements = strtok(dataTxt,separateurs);
 	while(elements)
 	{
-		data[i] = elements;
-		elements = strtok(NULL,"\r\n ");
+		/* On passe au séparateur suivants et on stocke l'élément dans un tableau */
+		data[i] = elements; 
+		elements = strtok(NULL, separateurs);
 		i++;
 	}
+
 }
 
+void assembleur_str_to_hexa(char * assembleur_string, char hexa_operation[],char *table[]){
 
-
-
-int main()
-{
-	char instru[] = "BGTZ $2 54"; /* Instrction qui sera récupérée dans un fichier LW $3 54(2) ADDI $2,$0,5 */
-
-	char tableTxt[10000]; /* table d'instruction en string */
 	
 	char *data[4]; /*Tableau qui va contenir les différents éléments de l'instruction : ["ADDI","$1","$2","$3"] */
 	
-	char *table[156]; /*Tableau qui va contenir toute la table d'instruction séparées par des retours à la ligne */
-
 	int k=0; /* k : index de l'opération de l'instruction trouvé dans la table */
 
 	char * instruction; /* va contenir l'instruction "ADD" par exemple */
@@ -38,17 +33,16 @@ int main()
 
 	int bin_operation[32]; /* opération complète en binaire */
 
-	char hexa_operation[8]; /* opération complète en hexadécimal */
 
 
 	int i = 0; /* compteur qui avance dans les opérandes prévues dans la table */
 	int j = 0; /* compteur qui va avancer dans les opérandes de l'instruction*/
 	
-	lecture_fichier("table_instructions.txt",tableTxt); /* Stocke la table d'instruction */
+	char * separateurs = " ,\n";
 
-	parseData(instru,data); /* Decoupage de l'instruction */
+	decoupage_data(assembleur_string,data,separateurs); /* Decoupage de l'instruction */
 
-	parseData(tableTxt,table); /* Decoupage de la table d'instruction */
+
 
 	/* On recupere l'instruction dans l'opération */
 	instruction = data[0];
@@ -203,29 +197,58 @@ int main()
 
 
 	}
-
 	/* On traduit le résultat binaire en hexadécimal */
 	bin_to_hexa(32,bin_operation,hexa_operation);
-	printf("\n0x%s\n",hexa_operation);
 
-	/* Il faut stocker les résultats en hexadécimal dans un tableau pour pouvoir l'utiliser pour écrire dans le fichier txt final */
-	int nb_instruction = 2;
-	char** tableauHexa = NULL;
-
-	tableauHexa = malloc(nb_instruction * sizeof(char*));
-	char *valeur0 = malloc(8);
-	char *valeur1 = malloc(8);
 	
-	valeur0 = "73039000";
-	valeur1 = "730391BA";
-	tableauHexa[0] = valeur0;
-
-   	tableauHexa[1] = valeur1 ;
-
-	tableauHexa[nb_instruction] = '\0';
-
-	ecriture_fichier("resultat_hexa",tableauHexa,nb_instruction);
 
 
 	return(0);
 }
+
+
+int main()
+{
+
+	/* Lecture du jeu d'instruction */
+	char tableTxt[10000]; /* table d'instruction en string */
+	char *table[156]; /*Tableau qui va contenir toute la table d'instruction séparées par des retours à la ligne */
+	lecture_fichier("table_instructions.txt",tableTxt); /* Stocke la table d'instruction */
+	char * separateurs_data = " ,\n";
+	decoupage_data(tableTxt,table,separateurs_data); /* Decoupage de la table d'instruction */
+	
+	
+	/* Lecture du fichier assembleur */
+	int i = 0;
+	char * separateurs_lignes = "\n";
+	char assembleur_txt[1000];
+	char *assembleur_lignes[100];
+	lecture_fichier("in2.txt",assembleur_txt);
+	decoupage_data(assembleur_txt,assembleur_lignes,separateurs_lignes); 
+
+	/* Il faut stocker les résultats en hexadécimal dans un tableau pour pouvoir l'utiliser pour écrire dans le fichier txt final */
+	int nb_instruction = 100;
+	/*
+	char** tableauHexa = NULL;
+	tableauHexa = malloc(nb_instruction * sizeof(char*)); */
+
+	char *tableauHexa[100];
+	while(strcmp(assembleur_lignes[i],"\0") != 0)
+	{
+		char hexa_operation[8];
+		printf("%s\n",assembleur_lignes[i]);
+		assembleur_str_to_hexa(assembleur_lignes[i], hexa_operation, table);
+		printf("0x%s\n",hexa_operation);
+		/*char *valeur = malloc(8);
+		valeur = hexa_operation; */
+		tableauHexa[i] = hexa_operation;
+		i++;
+	}
+
+	tableauHexa[nb_instruction] = '\0';
+	ecriture_fichier("resultat_hexa.txt",tableauHexa,nb_instruction);
+	printf("\nEcriture du fichier OK\n");
+	
+	return 0;
+}
+

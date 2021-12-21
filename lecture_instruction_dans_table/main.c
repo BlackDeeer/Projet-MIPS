@@ -233,19 +233,16 @@ int main()
 	tableauHexa = malloc(nb_instruction * sizeof(char*)); */
 
 	char *tableauHexa[100];
-	while(strcmp(assembleur_lignes[i],"\0") != 0)
+	while(assembleur_lignes[i]!=NULL) /* il fallait juste faire ça ... chelou on l'avait pas fait ? ou on a mélangé les erreus */
 	{
-		char hexa_operation[8];
-		printf("%s\n",assembleur_lignes[i]);
+		char * hexa_operation = malloc(8); /* pointeur au lieu de tableau sinon il pointe vers les memes valeurs et on a que le dernier hexa répété*/
 		assembleur_str_to_hexa(assembleur_lignes[i], hexa_operation, table);
 		printf("0x%s\n",hexa_operation);
-		/*char *valeur = malloc(8);
-		valeur = hexa_operation; */
 		tableauHexa[i] = hexa_operation;
 		i++;
 	}
 
-	tableauHexa[nb_instruction] = '\0';
+	tableauHexa[i] = '\0'; /* J'ai mis i parce qu'on sait que c'est ce i qui nous fait sortir du while donc c'est la fin*/
 	ecriture_fichier("resultat_hexa.txt",tableauHexa,nb_instruction);
 	printf("\nEcriture du fichier OK\n");
 	

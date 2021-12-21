@@ -25,7 +25,7 @@ void lecture_fichier(char * nom_du_fichier, char * data){
 	fclose(donnees);
 }
 
-void ecriture_fichier(char nomFichier[], char **tableauHexa, int taille) {
+void ecriture_fichier(char nomFichier[], char *tableauHexa[], int taille) {
 	int i = 0;
 	FILE * resultats; 
 	

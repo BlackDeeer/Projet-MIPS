@@ -3,7 +3,7 @@
 #include "../fonctions/header/fichier.h"
 #include "../fonctions/header/conversion.h"
 
-#define TAILLE_TABLE 156
+#define TAILLE_TABLE 155
 
 /* Fonction qui permet de découper un string en tableau d'éléments (séparés par " " et "\n") */
 void decoupage_data(char * dataTxt, char * data [], char * separateurs){
@@ -40,7 +40,7 @@ void assembleur_str_to_hexa(char * assembleur_string, char hexa_operation[],char
 	int i = 0; /* compteur qui avance dans les opérandes prévues dans la table */
 	int j = 0; /* compteur qui va avancer dans les opérandes de l'instruction*/
 	
-	char * separateurs = " ,\n";
+	char * separateurs = " ,\r\n";
 
 	decoupage_data(assembleur_string,data,separateurs); /* Decoupage de l'instruction */
 
@@ -48,9 +48,8 @@ void assembleur_str_to_hexa(char * assembleur_string, char hexa_operation[],char
 
 	/* On recupere l'instruction dans l'opération */
 	instruction = data[0];
-
-	for (k=0 ; (k<TAILLE_TABLE) && (strcmp(table[k],instruction)!=0); k+=7); /* Recherche de la ligne correspondant à l'opération */
-	if (k>TAILLE_TABLE){
+	for (k=0 ; (table[k][0]!='\0') && (strcmp(table[k],instruction)!=0); k+=7); /* Recherche de la ligne correspondant à l'opération */
+	if (table[k][0]=='\0'){
 		fprintf(stderr,"ERREUR : L'instruction à la ligne %d n'est pas reconnue\n",ligne_courante);
 		exit(EXIT_FAILURE);
 	}
@@ -86,10 +85,10 @@ void assembleur_str_to_hexa(char * assembleur_string, char hexa_operation[],char
 				case ('i') : 
 					++j;
 					if (data[j][0]=='$'){
-						fprintf(stderr,"ERREUR : A la ligne %d, l'opérande n°%d doit être une valeur\n",ligne_courante,table[k+3+i][1]-48);
+						fprintf(stderr,"ERREUR : A la ligne %d, l'opérande n°%d doit être une valeur\n",ligne_courante,j);
 						exit(EXIT_FAILURE);
 					} else if (atoi(data[j])>131071 || atoi(data[j])<0 ) {
-						fprintf(stderr,"ERREUR : A la ligne %d, la valeur immédiate doit être comprise entre 0 et 131071\n",ligne_courante,table[k+3+i][1]-48);
+						fprintf(stderr,"ERREUR : A la ligne %d, la valeur immédiate doit être comprise entre 0 et 131071\n",ligne_courante);
 						exit(EXIT_FAILURE);
 					}
 					op[i] = atoi(data[++j]); 
@@ -240,6 +239,7 @@ int main()
 	/* Lecture du jeu d'instruction */
 	char tableTxt[10000]; /* table d'instruction en string */
 	char *table[TAILLE_TABLE]; /*Tableau qui va contenir toute la table d'instruction séparées par des retours à la ligne */
+	table[TAILLE_TABLE-1] = "\0";
 	lecture_fichier("table_instructions.txt",tableTxt); /* Stocke la table d'instruction */
 	char * separateurs_data = " ,\n";
 	decoupage_data(tableTxt,table,separateurs_data); /* Decoupage de la table d'instruction */

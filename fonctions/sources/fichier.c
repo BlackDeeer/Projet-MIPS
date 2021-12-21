@@ -22,6 +22,7 @@ void lecture_fichier(char * nom_du_fichier, char * data){
 		i++;
 	}
 
+
 	/*Fermeture*/
 	fclose(donnees);
 }

@@ -3,6 +3,8 @@
 #include "../fonctions/header/fichier.h"
 #include "../fonctions/header/conversion.h"
 
+#define TAILLE_TABLE 156
+
 /* Fonction qui permet de découper un string en tableau d'éléments (séparés par " " et "\n") */
 void decoupage_data(char * dataTxt, char * data [], char * separateurs){
 	char *elements;
@@ -19,7 +21,7 @@ void decoupage_data(char * dataTxt, char * data [], char * separateurs){
 
 }
 
-void assembleur_str_to_hexa(char * assembleur_string, char hexa_operation[],char *table[]){
+void assembleur_str_to_hexa(char * assembleur_string, char hexa_operation[],char *table[], int ligne_courante){
 
 	
 	char *data[4]; /*Tableau qui va contenir les différents éléments de l'instruction : ["ADDI","$1","$2","$3"] */
@@ -47,8 +49,12 @@ void assembleur_str_to_hexa(char * assembleur_string, char hexa_operation[],char
 	/* On recupere l'instruction dans l'opération */
 	instruction = data[0];
 
-	for (k=0 ; (strcmp(table[k],instruction)!=0) & (table[k]!=NULL) ; k+=7); /* Recherche de la ligne correspondant à l'opération */
-	
+	for (k=0 ; (k<TAILLE_TABLE) && (strcmp(table[k],instruction)!=0); k+=7); /* Recherche de la ligne correspondant à l'opération */
+	if (k>TAILLE_TABLE){
+		fprintf(stderr,"ERREUR : L'instruction à la ligne %d n'est pas reconnue\n",ligne_courante);
+		exit(EXIT_FAILURE);
+	}
+
 	/* On récupere dans la table des instructions les valeurs suivantes : */
 	opcode = table[k+1];
 	type_instruction = table[k+2][0];
@@ -66,11 +72,26 @@ void assembleur_str_to_hexa(char * assembleur_string, char hexa_operation[],char
 			int bin_taille;
 			switch(table[k+3+i][0]){
 				case ('r') : 
+					if (data[table[k+3+i][1]-48][0]!='$'){
+						fprintf(stderr,"ERREUR : A la ligne %d, l'opérande n°%d doit être un registre ...\n",ligne_courante,table[k+3+i][1]-48);
+						exit(EXIT_FAILURE);
+					} else if (atoi(data[table[k+3+i][1]-48]+1)>63 || atoi(data[table[k+3+i][1]-48]+1)<0 ) {
+						fprintf(stderr,"ERREUR : A la ligne %d, le registre %d doit être compris entre 0 et 63 ...\n",ligne_courante,table[k+3+i][1]-48);
+						exit(EXIT_FAILURE);
+					}
 					op[i] = atoi(data[table[k+3+i][1]-48]+1);
 					bin_taille = 5;
 					++j;
 					break;
 				case ('i') : 
+					++j;
+					if (data[j][0]=='$'){
+						fprintf(stderr,"ERREUR : A la ligne %d, l'opérande n°%d doit être une valeur\n",ligne_courante,table[k+3+i][1]-48);
+						exit(EXIT_FAILURE);
+					} else if (atoi(data[j])>131071 || atoi(data[j])<0 ) {
+						fprintf(stderr,"ERREUR : A la ligne %d, la valeur immédiate doit être comprise entre 0 et 131071\n",ligne_courante,table[k+3+i][1]-48);
+						exit(EXIT_FAILURE);
+					}
 					op[i] = atoi(data[++j]); 
 					bin_taille = 16;
 					break;
@@ -113,9 +134,9 @@ void assembleur_str_to_hexa(char * assembleur_string, char hexa_operation[],char
 				bin_operation[i] = bin_op[2][i-16];
 			}	
 
-			printf("%d",bin_operation[i]);
+			/*printf("%d",bin_operation[i]);*/
 		}
-		printf("\n");
+		/*printf("\n");*/
 
 
 	}
@@ -130,6 +151,13 @@ void assembleur_str_to_hexa(char * assembleur_string, char hexa_operation[],char
 			int bin_taille;
 			switch(table[k+3+i][0]){
 				case ('r') : 
+					if (data[table[k+3+i][1]-48][0]!='$'){
+						fprintf(stderr,"ERREUR : A la ligne %d, l'opérande n°%d doit être un registre ...\n",ligne_courante,table[k+3+i][1]-48);
+						exit(EXIT_FAILURE);
+					} else if (atoi(data[table[k+3+i][1]-48]+1)>63 || atoi(data[table[k+3+i][1]-48]+1)<0 ) {
+						fprintf(stderr,"ERREUR : A la ligne %d, le registre %d doit être compris entre 0 et 63 ...\n",ligne_courante,table[k+3+i][1]-48);
+						exit(EXIT_FAILURE);
+					}
 					op[i] = atoi(data[table[k+3+i][1]-48]+1);
 					bin_taille = 5;
 					break;
@@ -168,9 +196,9 @@ void assembleur_str_to_hexa(char * assembleur_string, char hexa_operation[],char
 				bin_operation[i] = opcode[i-26]-48;
 			}	
 
-			printf("%d",bin_operation[i]);
+			/* printf("%d",bin_operation[i]); */
 		}
-		printf("\n");
+		/*printf("\n");*/
 
 
 	}
@@ -191,9 +219,9 @@ void assembleur_str_to_hexa(char * assembleur_string, char hexa_operation[],char
 				bin_operation[i] = bin_instr_index[i-6];
 			}	
 
-			printf("%d",bin_operation[i]);
+			/*printf("%d",bin_operation[i]);*/
 		}
-		printf("\n");
+		/*printf("\n");*/
 
 
 	}
@@ -203,7 +231,6 @@ void assembleur_str_to_hexa(char * assembleur_string, char hexa_operation[],char
 	
 
 
-	return(0);
 }
 
 
@@ -212,40 +239,91 @@ int main()
 
 	/* Lecture du jeu d'instruction */
 	char tableTxt[10000]; /* table d'instruction en string */
-	char *table[156]; /*Tableau qui va contenir toute la table d'instruction séparées par des retours à la ligne */
+	char *table[TAILLE_TABLE]; /*Tableau qui va contenir toute la table d'instruction séparées par des retours à la ligne */
 	lecture_fichier("table_instructions.txt",tableTxt); /* Stocke la table d'instruction */
 	char * separateurs_data = " ,\n";
 	decoupage_data(tableTxt,table,separateurs_data); /* Decoupage de la table d'instruction */
 	
-	
-	/* Lecture du fichier assembleur */
-	int i = 0;
-	char * separateurs_lignes = "\n";
-	char assembleur_txt[1000];
-	char *assembleur_lignes[100];
-	lecture_fichier("in2.txt",assembleur_txt);
-	decoupage_data(assembleur_txt,assembleur_lignes,separateurs_lignes); 
+	/* -------------------------------------- DEBUT LECTURE LIGNE PAR LIGNE ---------------------------------*/
+	char *tableauHexa[4];
+	int ligne_courante = 1;
+	int ligne_utiles = 0;
 
-	/* Il faut stocker les résultats en hexadécimal dans un tableau pour pouvoir l'utiliser pour écrire dans le fichier txt final */
-	int nb_instruction = 100;
-	/*
-	char** tableauHexa = NULL;
-	tableauHexa = malloc(nb_instruction * sizeof(char*)); */
 
-	char *tableauHexa[100];
-	while(assembleur_lignes[i]!=NULL) /* il fallait juste faire ça ... chelou on l'avait pas fait ? ou on a mélangé les erreus */
-	{
-		char * hexa_operation = malloc(8); /* pointeur au lieu de tableau sinon il pointe vers les memes valeurs et on a que le dernier hexa répété*/
-		assembleur_str_to_hexa(assembleur_lignes[i], hexa_operation, table);
-		printf("0x%s\n",hexa_operation);
-		tableauHexa[i] = hexa_operation;
-		i++;
+	FILE * fichier_txt = fopen("in2.txt","r");
+
+	if (fichier_txt == NULL){
+		perror("Impossible d'ouvrir le fichier");
+		exit(EXIT_FAILURE);
 	}
 
-	tableauHexa[i] = '\0'; /* J'ai mis i parce qu'on sait que c'est ce i qui nous fait sortir du while donc c'est la fin*/
+	char fragment[4];
+	/* On va stocker les fragments dans un tampon de ligne */
+	size_t longueur_fragment = sizeof(fragment); /* type size_t = entier naturels pas de nombre négatif ! (on peut le remplacer par int si jamais mais inutile)*/
+	char *ligne = malloc(longueur_fragment); /* On va le realloc plus tard */
+
+	if (ligne == NULL){
+		perror("Impossible d'allouer de la mémoire au tampon de la ligne");
+		exit(EXIT_FAILURE);
+	}
+
+	/* On vide la chaine de caractere : ligne = "" */
+	ligne[0] = '\0';
+
+
+	while(fgets(fragment, sizeof(fragment), fichier_txt) != NULL){
+
+		size_t longueur_ligne_utilisee = strlen(ligne); /* au debut : 0 */
+		size_t longueur_fragment_utilisee = strlen(fragment); /* au debut : 32 */
+
+		if (longueur_fragment-longueur_ligne_utilisee<longueur_fragment_utilisee) {
+			longueur_fragment *= 2;
+			ligne = realloc(ligne, longueur_fragment);
+			if (ligne == NULL){
+				perror("Impossible d'allouer plus de  mémoire au tampon de ligne");
+				free(ligne);
+				exit(EXIT_FAILURE);
+			}
+		}
+
+		strncpy(ligne + longueur_ligne_utilisee, fragment, longueur_fragment-longueur_ligne_utilisee);
+		longueur_ligne_utilisee += longueur_fragment_utilisee;
+		/* Vérification de fin de ligne */
+		if (ligne[longueur_ligne_utilisee-1] == '\n'){
+			
+			if (ligne[0] != '\r' && ligne[0] != '#'){
+
+				printf("(%d) : %s",ligne_courante,ligne);
+
+				char * hexa_operation = malloc(8);
+				assembleur_str_to_hexa(ligne, hexa_operation, table, ligne_courante);
+				tableauHexa[ligne_utiles] = hexa_operation;
+				
+				printf("--> %s\n\n",hexa_operation);
+
+				ligne_utiles ++;
+			}
+			ligne_courante ++;
+			ligne[0] = '\0';
+		}
+
+
+	}
+
+	fclose(fichier_txt);
+	free(ligne);
+
+	/* -------------------------------------- FIN LECTURE LIGNE PAR LIGNE ----------------------------------*/
+
+	
+	int nb_instruction = ligne_courante;
+	tableauHexa[ligne_utiles] = '\0'; /* J'ai mis i parce qu'on sait que c'est ce i qui nous fait sortir du while donc c'est la fin*/
 	ecriture_fichier("resultat_hexa.txt",tableauHexa,nb_instruction);
 	printf("\nEcriture du fichier OK\n");
+	exit(EXIT_SUCCESS);
 	
+	
+
 	return 0;
 }
 

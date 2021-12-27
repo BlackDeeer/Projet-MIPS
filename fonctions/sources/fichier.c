@@ -12,7 +12,7 @@ void lecture_fichier(char * nom_du_fichier, char * data){
 
 	/*Gestion d'erreurs a l'ouverture*/
 	if (donnees == NULL)  {
-		perror("Probleme lors de l'ouverture du fichier pour la lecture\n");
+		fprintf(stderr,"Probleme lors de l'ouverture du fichier : '%s' pour la lecture\n",nom_du_fichier);
 		exit(EXIT_FAILURE);
 	}
 	
@@ -21,7 +21,7 @@ void lecture_fichier(char * nom_du_fichier, char * data){
 		fscanf(donnees, "%c", &data[i]); 
 		i++;
 	}
-
+	
 
 	/*Fermeture*/
 	fclose(donnees);
@@ -36,7 +36,7 @@ void ecriture_fichier(char nomFichier[], char *tableauHexa[], int taille) {
 
 	/*Gestion d'erreurs à l'ouverture*/
 	if (resultats == NULL)  {
-		perror("Probleme lors de l'ouverture du fichier pour l'écriture\n");
+		fprintf(stderr,"Probleme lors de l'ouverture du fichier :'%s' pour l'écriture\n",nomFichier);
 		exit(EXIT_FAILURE);
 	}
 
@@ -54,17 +54,19 @@ void ecriture_fichier(char nomFichier[], char *tableauHexa[], int taille) {
 
 void lecture_fichier_ligne_par_ligne(char * fichier){
 
-	FILE * fichier_txt = fopen(fichier,"r");
-
-	if (fichier_txt == NULL){
-		perror("Impossible d'ouvrir le fichier");
-		exit(EXIT_FAILURE);
-	}
-
 	char fragment[4];
 	/* On va stocker les fragments dans un tampon de ligne */
 	size_t longueur_fragment = sizeof(fragment); /* type size_t = entier naturels pas de nombre négatif ! (on peut le remplacer par int si jamais mais inutile)*/
 	char *ligne = malloc(longueur_fragment); /* On va le realloc plus tard */
+
+	FILE * fichier_txt = fopen(fichier,"r");
+
+	if (fichier_txt == NULL){
+		fprintf(stderr,"Impossible d'ouvrir le fichier : '%s'\n",fichier);
+		exit(EXIT_FAILURE);
+	}
+
+	
 
 	if (ligne == NULL){
 		perror("Impossible d'allouer de la mémoire au tampon de la ligne");

@@ -1,9 +1,8 @@
 # Explication du code de lecture d'instruction
 
-## Déroulement :
+## Fonctionnement :
 
 On récupère une instruction MIPS : `"ADD $1 $2 $3"`
-Elle est au format string
 
 - On va découper le string en plusieurs parties comme ceci :
 
@@ -22,7 +21,7 @@ Elle est au format string
 
         ADD 100000 R r2 r3 r1 0
 
-    Comment on lit ça ?
+    Comment lit-on cela ?
     - l'instruction est de type "R" alors l'opération traduite sera sous cette forme
 
             | SPECIAL | ? | ? | ? | ? | OPCODE |
@@ -46,6 +45,8 @@ Elle est au format string
 
         - `0` signie qu'on aura un vecteur de 5 bits nuls : `"00000"`
 
+        - `1` correspond à 1 codé sur 5 bits : `"00001"`
+
         - `b` signifie qu'une partie de l'instruction est sous la forme `offset(base)` on va isoler la base de l'offset
 
         - `o` on utilise la précédente découpe pour placer l'offset
@@ -61,4 +62,6 @@ Elle est au format string
 - Pour enfin donner en hexadécimal :
 
     `0x00430820`
+
+On a préféré convertir d'abord tout en binaire plutot que de faire des décalages en décimal pour bien comprendre ce qu'il se passe.
 

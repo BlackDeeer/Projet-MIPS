@@ -1,0 +1,18 @@
+#Test 1
+
+ADDI $1 $0 3 # a = 3
+ADDI $2 $0 30 # b = 30
+ADDI $3 $0 12 # c = 12
+
+SLL $1 $1 1 # a*=2
+
+BEQ $1 $3 28 # si a == c alors goto 28
+BNE $1 $2 12 # tant que a!=30
+J 52
+
+SUB $3 $2 $3 # c = b - c
+DIV $3 $1 # Hi = c%a ; Lo = c//a
+MFHI $4 # r = Hi
+MFLO $5 # q = Lo
+SLT $6 $5 $4 # d = r<q
+J 20

@@ -7,6 +7,10 @@
 void int_to_binary( int x, int length, int binary[] ){
 	int i = 0;
 	
+	if (x<0){
+		x = pow(2,length+1) + x;
+	}
+
 	for(i=length-1; i >= 0 ;i--)    
 	{    
 		if( x > 0)

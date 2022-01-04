@@ -1,0 +1,8 @@
+ADDI $5,$0,5
+ADDI $63,$5,0
+# test
+
+ADD $44,$5,$34
+# instruction inconnue
+MULT $2 $5
+NOP 

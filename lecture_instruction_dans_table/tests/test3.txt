@@ -1,0 +1,24 @@
+# Test de toutes les fonctions
+ADDI $10, $0, 10 # x = 10
+ADDI $11, $0, 5 # y = 5
+BEQ $10, $11, 100
+BGTZ $11, 100
+BLEZ $10, 100
+BNE $10, $10, 100
+LUI $9, 250
+LW $9, 16($8)
+SW $12, 20($8)
+ADD $13, $10, $9
+AND $14, $10, $13
+DIV $14, $13
+MFHI $14
+MFLO $14
+MULT $14, $11
+NOP 
+OR $15,$14,$9
+SLL $16,$8,2
+SLT $17, $11, $10
+SUB $18, $17 ,$10
+XOR $19, $18, $14
+JAL 1000
+J 250

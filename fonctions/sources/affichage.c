@@ -79,7 +79,7 @@ void init_affichage(){
 
 	initscr();
 	cbreak();
-	nodelay(stdscr,TRUE);
+	nodelay(stdscr,FALSE);
 	/*noecho();*/
 	start_color();
 
@@ -102,8 +102,9 @@ void init_affichage(){
 	}
 	
 	log_mips = malloc(COLS);
-	*log_mips = (char *) malloc(COLS);
-	nb_log=0;
+	*log_mips = (char *) malloc(COLS-10);
+	nb_log=1;
+	nodelay(stdscr,TRUE);
 	start_affichage();
 	update_affichage();
 	
@@ -114,23 +115,30 @@ void init_affichage(){
 
 
 void print_log(char *str){
-	char ** log_temp;
+	char **log_temp, **log_temp2;
 	int k;
 
 	nb_log ++;
 	log_mips = realloc(log_mips,(nb_log)*COLS);
 	
-	
-	strcpy(*log_mips,str);
-	
-	wprintw(fenLog,"OK|\n",nb_log);
-
 	log_temp = log_mips;
+	log_temp+=nb_log-2;
+	*log_temp = (char *) malloc(COLS-10);
+	strcpy(*log_temp,str);
+	
+
+	log_temp2 = log_mips;
 
 	if (nb_log<2*LINES/5-4){
-		for (k=0;k<nb_log;k++){
-			mvwprintw(fenLog,k+1,2,">\t%s",*log_temp);
-			log_temp++;
+		for (k=0;k<nb_log-1;k++){
+			mvwprintw(fenLog,k+1,2,">\t%s",*log_temp2);
+			log_temp2++;
+		}
+	} else {
+		log_temp2+=nb_log-17-1;
+		for (k=0;k<nb_log-2;k++){
+			mvwprintw(fenLog,k+1,2,">\t%s",*log_temp2);
+			log_temp2++;
 		}
 	}
 }

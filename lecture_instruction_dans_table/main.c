@@ -442,7 +442,6 @@ int main(int argc, char *argv[])
 			strcpy(ligneMod,ligne);
 			decoupage_data(ligneMod,elementsLignes,"\t\0 ");
 			
-			printf("%c\n",elementsLignes[0][0]);
 			if (ligne[0] != '\r' && ligne[0] != '\n'  && ligne[0] != '#' && elementsLignes[0][0]!='#'){ /* si ce n'est pas un retour à la ligne, ou un commentaire seul */
 
 				
@@ -467,14 +466,15 @@ int main(int argc, char *argv[])
 	}
 
 	fclose(fichier_txt);
-	
-	if (ligne != "\0"){
+
+
+	if (ligne[0] != '\0'){
 		ligneMod = (char *) malloc(sizeof(ligne));
 		strcpy(ligneMod,ligne);
 		decoupage_data(ligneMod,elementsLignes,"\t\0 ");
 		
 		/* Pour la potentielle dernière ligne (en attendant de trouver un truc plus propre) */
-		if (ligne[0] != '\r' && ligne[0] != '\n' && ligne[0] != '#'  && elementsLignes[0][0]!='#'){ /* si ce n'est pas un retour à la ligne, ou un commentaire seul */
+		if (ligne[0] != '\r' && ligne[0] != '\n' && ligne[0] != '#'  && elementsLignes[0][0]!='#' && elementsLignes[0]!=NULL){ /* si ce n'est pas un retour à la ligne, ou un commentaire seul */
 
 			
 			printf("(%d) : %s\n",ligne_courante,ligne); /* affichage */

@@ -121,7 +121,6 @@ void print_log(char *str){
 	int k;
 	int lmax = 2*LINES/5-4;
 
-
 	nb_log ++;
 	log_mips = realloc(log_mips,(nb_log)*COLS);
 	
@@ -140,7 +139,8 @@ void print_log(char *str){
 			log_temp2++;
 		}
 	} else {
-		log_temp2+=nb_log-lmax-1;
+		printf("ui%d\n",lmax);
+		log_temp2+=nb_log-lmax;
 		for (k=0;k<lmax-1;k++){
 			mvwprintw(fenLog,k+1,2,">\t%s",*log_temp2);
 			log_temp2++;

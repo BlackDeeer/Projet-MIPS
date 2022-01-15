@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <ctype.h>
 
 
 int bin_to_int(char* bin, int length){
@@ -93,64 +94,89 @@ void bin_to_hexa(int length, int bin_operation[], char hexa_operation[] )
 }
 
 
-void hexa_to_bin(int length, char *hexa, char bin[32], int length_bin)
+void hexa_to_bin(int length, char *hexa, int bin[32], int length_bin)
 {
     /* Initialisation des variables */
-    int i,j,x = 0;
-    /* On traverse chaque élément de hexa*/
-    for(i = 0; i <= length; i++ )
+    int i,j,x,indice_bin = 0;
+    if(strlen(hexa) != length)
     {
-        switch(hexa[i])
-			{
-				case 'A':
-					bin[length_bin-1] = '1';
-                    bin[length_bin-2] = '0';
-                    bin[length_bin-3] = '1';
-                    bin[length_bin-4] = '0';
-					break;
-				case 'B':
-					bin[length_bin-1] = '1';
-                    bin[length_bin-2] = '0';
-                    bin[length_bin-3] = '1';
-                    bin[length_bin-4] = '1';
-					break;
-				case 'C':
-					bin[length_bin-1] = '1';
-                    bin[length_bin-2] = '1';
-                    bin[length_bin-3] = '0';
-                    bin[length_bin-4] = '0';
-					break;
-				case 'D':
-					bin[length_bin-1] = '1';
-                    bin[length_bin-2] = '1';
-                    bin[length_bin-3] = '0';
-                    bin[length_bin-4] = '1';
-					break;
-				case 'E':
-					bin[length_bin-1] = '1';
-                    bin[length_bin-2] = '1';
-                    bin[length_bin-3] = '1';
-                    bin[length_bin-4] = '0';
-					break;
-				case 'F':
-					bin[length_bin-1] = '1';
-                    bin[length_bin-2] = '1';
-                    bin[length_bin-3] = '1';
-                    bin[length_bin-4] = '1';
-					break;
-                /* Si hexa[i] n'est pas égale aux caractères précédents alors c'est un entier que l'on va transformer en binaire */
-                default:
-                    /* On transforme le caractère en un integer */
-                    x = hexa[i] - '0'; 
-                    for(j= length_bin - 4 ; j < length_bin ; j++)    
-                    {    
-                        bin[j] = x % 2 + 48;
-                        x = x/2;
-                    }   
-			}
-            length_bin -= 4;
+        fprintf(stderr,"La taile du texte hexadecimal %s est differente de celle attendue( attendue: %d =! %ld)\n",hexa,length, strlen(hexa));
+        exit(EXIT_FAILURE);
+    }
+    else if(length_bin != 4*length)
+    {
+        fprintf(stderr,"Erreur sur les tailles des tableaux détéctée ! \n");
+        exit(EXIT_FAILURE);
 
     }
+    else{
+        /* On traverse chaque élément de hexa*/
+        for(i = 0; i < length; i++ )
+        {
+            switch(tolower(hexa[i]))
+                {
+                    case 'a':
+                        bin[indice_bin] = 1;
+                        bin[indice_bin + 1] = 0;
+                        bin[indice_bin + 2] = 1;
+                        bin[indice_bin + 3] = 0;
+                        break;
+                    case 'b':
+                        bin[indice_bin] = 1;
+                        bin[indice_bin + 1] = 0;
+                        bin[indice_bin + 2] = 1;
+                        bin[indice_bin + 3] = 1;
+                        break;
+                    case 'c':
+                        bin[indice_bin] = 1;
+                        bin[indice_bin + 1] = 1;
+                        bin[indice_bin + 2] = 0;
+                        bin[indice_bin + 3] = 0;
+                        break;
+                    case 'd':
+                        bin[indice_bin] = 1;
+                        bin[indice_bin + 1] = 1;
+                        bin[indice_bin + 2] = 0;
+                        bin[indice_bin + 3] = 1;
+                        break;
+                    case 'e':
+                        bin[indice_bin] = 1;
+                        bin[indice_bin + 1] = 1;
+                        bin[indice_bin + 2] = 1;
+                        bin[indice_bin + 3] = 0;
+                        break;
+                    case 'f':
+                        bin[indice_bin] = 1;
+                        bin[indice_bin + 1] = 1;
+                        bin[indice_bin + 2] = 1;
+                        bin[indice_bin + 3] = 1;
+                        break;
+                    /* Si hexa[i] n'est pas égale aux caractères précédents alors c'est un entier que l'on va transformer en binaire */
+                    default:
+                        /* On transforme le caractère en un integer */
+                        x = hexa[i] - '0'; 
 
+                        /* On vérifie que c'est bien un chiffre */
+                        if( hexa[i] >= '0' && hexa[i] <= '9' )
+                        {
+                            for(j= indice_bin + 3 ; j >= indice_bin ; j--)    
+                            {    
+                                bin[j] = x % 2;
+                                x = x/2;
+                            }   
+                            
+                        }
+                        /* Sinon le caractère est faux */
+                        else{
+                            fprintf(stderr,"Le code hexadécimal %s est incorrecte ( erreur sur %c). Les caractère acceptées sont: 0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F\n",hexa,hexa[i]);
+                            exit(EXIT_FAILURE);
+                        }
+
+                        
+                }
+                indice_bin += 4;
+
+        }
+    }
 
 }

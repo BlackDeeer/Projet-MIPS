@@ -12,7 +12,9 @@ void start_affichage(){
 	erase();
 	init_pair(1,COLOR_BLUE,COLOR_BLACK);
 	init_pair(2,COLOR_WHITE,COLOR_BLACK);
-	
+	init_pair(3,COLOR_GREEN,COLOR_BLACK);
+	init_pair(4,COLOR_RED,COLOR_BLACK);
+
 	attron(COLOR_PAIR(1) | A_BOLD);
 	fenReg = subwin(stdscr, 3*LINES / 5+2, COLS /2, 0,0);
 	fenMem = subwin(stdscr, 3*LINES / 5+2, COLS /2, 0,COLS/2+1);
@@ -26,7 +28,9 @@ void start_affichage(){
 
 	mvwprintw(fenReg,0,5,"| REGISTRES |");
 	mvwprintw(fenMem,0,5,"| MEMOIRE |");
+	
 	mvwprintw(fenLog,0,5,"| LOG |");
+	wattron(fenLog,COLOR_PAIR(2)|A_NORMAL);
 
 
 	wrefresh(fenReg);
@@ -37,7 +41,7 @@ void start_affichage(){
 
 }
 
-void update_affichage(){
+void update_affichage(registre_mod){
 	int nbCol = 5;
 	int nbLin = 8;
 	int paddingCol = 6;
@@ -45,22 +49,28 @@ void update_affichage(){
 	int interC = ( COLS/2 - paddingCol-1 ) / nbCol;
 	int interL = ( (3*LINES/5) - (paddingLin-1)/2 ) / nbLin;
 
-	wattron(fenReg,COLOR_PAIR(2) | A_NORMAL);
+	
 	int i;
 	int j;
 	int k = 0;
 	for (i=0;i<4;i++){
 		for (j=0;j<8;j++){
+
+			if(k!=registre_mod){
+				wattron(fenReg,COLOR_PAIR(2) | A_NORMAL);
+			} else {
+				wattron(fenReg,COLOR_PAIR(4)|A_BOLD);
+			}
+			
 			mvwprintw(fenReg,paddingLin + interL*j , paddingCol + i*interC,"$%2d : %8d",k,tableau_reg[k]);
 			k++;
 		}
 	}
-	wattron(fenReg,A_BOLD);
-	mvwvline(fenReg, paddingLin, paddingCol + 4*interC - 3 , ACS_VLINE, 3*8+1);
-	mvwprintw(fenReg,paddingLin, paddingCol + 4*interC,"HI : XXXXXXXX");
-	mvwprintw(fenReg,paddingLin + interL, paddingCol + 4*interC,"LO : XXXXXXXX");
-	mvwprintw(fenReg,paddingLin + interL*3, paddingCol + 4*interC,"PC : XXXXXXXX");
-	mvwprintw(fenReg,paddingLin + interL*4, paddingCol + 4*interC,"IR : XXXXXXXX");
+	wattron(fenReg,COLOR_PAIR(3)|A_BOLD);
+	mvwprintw(fenReg,paddingLin, paddingCol + 4*interC,"HI : %8d",tableau_reg[32]);
+	mvwprintw(fenReg,paddingLin + interL, paddingCol + 4*interC,"LO : %8d",tableau_reg[33]);
+	mvwprintw(fenReg,paddingLin + interL*3, paddingCol + 4*interC,"PC : %8d",PC);
+	mvwprintw(fenReg,paddingLin + interL*4, paddingCol + 4*interC,"IR : %8s",IR);
 
 
 	wattron(fenMem,COLOR_PAIR(2) | A_NORMAL);
@@ -68,11 +78,12 @@ void update_affichage(){
 	k=0;
 	for (i=0;i<4;i++){
 		for (j=0;j<8;j++){
-			mvwprintw(fenMem,paddingLin + interL*j , paddingCol + i*interC,"$%4d : XXXXXXXX",k);
+			mvwprintw(fenMem,paddingLin + interL*j , paddingCol + i*interC,"$%4d : %8d",k,tableau_mem[k/4]);
 			k+=4;
 		}
 	}
 	wrefresh(fenReg);
+	wrefresh(fenMem);
 
 }
 
@@ -82,7 +93,7 @@ void init_affichage(){
 	initscr();
 	cbreak();
 	nodelay(stdscr,FALSE);
-	/*noecho();*/
+	noecho();
 	start_color();
 
 	mvhline( LINES/2-3, 0 , ACS_HLINE, COLS);
@@ -106,7 +117,7 @@ void init_affichage(){
 	log_mips = malloc(COLS);
 	*log_mips = (char *) malloc(COLS-10);
 	nb_log=1;
-	nodelay(stdscr,TRUE);
+	/*nodelay(stdscr,TRUE);*/
 	start_affichage();
 	update_affichage();
 	
@@ -139,11 +150,11 @@ void print_log(char *str){
 			log_temp2++;
 		}
 	} else {
-		printf("ui%d\n",lmax);
 		log_temp2+=nb_log-lmax;
 		for (k=0;k<lmax-1;k++){
 			mvwprintw(fenLog,k+1,2,">\t%s",*log_temp2);
 			log_temp2++;
 		}
 	}
+	wrefresh(fenLog);
 }

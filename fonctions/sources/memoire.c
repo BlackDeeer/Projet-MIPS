@@ -4,7 +4,7 @@ int * tableau_mem;
 
 
 void initialisation_mem(){
-    tableau_mem = (__int32_t *) calloc(16, sizeof(__int32_t));
+    tableau_mem = (__int32_t *) calloc(32, sizeof(__int32_t));
 }
 
 int lecture_mem(int num_mem) {

@@ -4,6 +4,8 @@
 #include <stdlib.h>
 
 extern int * tableau_reg;
+extern char * IR;
+extern int PC;
 
 void initialisation_reg();
 int lecture_reg(int num_reg);

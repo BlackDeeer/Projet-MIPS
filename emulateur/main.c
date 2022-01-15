@@ -73,10 +73,11 @@ int main(){
                     int imm = bin_to_int(bin_imm,16);
 
 
-
+                    wgetch(stdscr);
                     ecriture_reg(rd,lecture_reg(rs)+imm);
-                    
-                    update_affichage();
+                    IR = instruction;
+                    PC+=4;
+                    update_affichage(rd);
                     char *log_current = (char *) malloc(COLS-10);
                     sprintf(log_current,"Le registre $%d a pris la valeur du registre $%d + %d\t%s",rd,rs,imm,instruction);
                     print_log(log_current);

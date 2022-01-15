@@ -8,7 +8,7 @@ void int_to_binary( int x, int length, int binary[] ){
 	int i = 0;
 	
 	if (x<0){
-		x = pow(2,length) + x;
+		x = pow(2,length+1) + x;
 	}
 
 	for(i=length-1; i >= 0 ;i--)    
@@ -78,67 +78,4 @@ void bin_to_hexa(int length, int bin_operation[], char hexa_operation[] )
 		
 	}
 	hexa_operation[8] = '\0';
-}
-
-
-void hexa_to_bin(int length, char *hexa, int bin[32], int length_bin)
-{
-    /* Initialisation des variables */
-    int i,j,x = 0;
-    /* On traverse chaque élément de hexa*/
-    for(i = 0; i <= length; i++ )
-    {
-        switch(hexa[i])
-			{
-				case 'A':
-					bin[length_bin-1] = 1;
-                    bin[length_bin-2] = 0;
-                    bin[length_bin-3] = 1;
-                    bin[length_bin-4] = 0;
-					break;
-				case 'B':
-					bin[length_bin-1] = 1;
-                    bin[length_bin-2] = 0;
-                    bin[length_bin-3] = 1;
-                    bin[length_bin-4] = 1;
-					break;
-				case 'C':
-					bin[length_bin-1] = 1;
-                    bin[length_bin-2] = 1;
-                    bin[length_bin-3] = 0;
-                    bin[length_bin-4] = 0;
-					break;
-				case 'D':
-					bin[length_bin-1] = 1;
-                    bin[length_bin-2] = 1;
-                    bin[length_bin-3] = 0;
-                    bin[length_bin-4] = 1;
-					break;
-				case 'E':
-					bin[length_bin-1] = 1;
-                    bin[length_bin-2] = 1;
-                    bin[length_bin-3] = 1;
-                    bin[length_bin-4] = 0;
-					break;
-				case 'F':
-					bin[length_bin-1] = 1;
-                    bin[length_bin-2] = 1;
-                    bin[length_bin-3] = 1;
-                    bin[length_bin-4] = 1;
-					break;
-                /* Si hexa[i] n'est pas égale aux caractères précédents alors c'est un entier que l'on va transformer en binaire */
-                default:
-                    /* On transforme le caractère en un integer */
-                    x = hexa[i] - '0'; 
-                    for(j= length_bin - 4 ; j < length_bin ; j++)    
-                    {    
-                        bin[j] = x % 2;
-                        x = x/2;
-                    }   
-            }
-            length_bin -= 4;
-
-    }
-
-
 }

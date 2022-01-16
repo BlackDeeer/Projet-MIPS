@@ -5,6 +5,7 @@
 
 WINDOW *fenReg, *fenMem, *fenLog;
 
+char *log_current;
 char **log_mips;
 int nb_log;
 
@@ -69,6 +70,11 @@ void update_affichage(registre_mod){
 	wattron(fenReg,COLOR_PAIR(3)|A_BOLD);
 	mvwprintw(fenReg,paddingLin, paddingCol + 4*interC,"HI : %8d",tableau_reg[32]);
 	mvwprintw(fenReg,paddingLin + interL, paddingCol + 4*interC,"LO : %8d",tableau_reg[33]);
+	if (k == 34){
+		wattron(fenReg,COLOR_PAIR(4)|A_BOLD);
+	} else {
+		wattron(fenReg,COLOR_PAIR(3) | A_BOLD);
+	}
 	mvwprintw(fenReg,paddingLin + interL*3, paddingCol + 4*interC,"PC : %8d",PC);
 	mvwprintw(fenReg,paddingLin + interL*4, paddingCol + 4*interC,"IR : %8s",IR);
 
@@ -97,7 +103,7 @@ void init_affichage(){
 	start_color();
 
 	mvhline( LINES/2-3, 0 , ACS_HLINE, COLS);
-	mvprintw( LINES/2-1, COLS/2-12 , "-- PRESS F11 TO START --");
+	mvprintw( LINES/2-1, COLS/2-32 , "-- PRESS F11 TO START (OU AFFICHER LA CONSOLE EN PLEIN ECRAN) --");
 	mvprintw( LINES/2-0, COLS/2-10 , "ou q pour quitter ...");
 	mvhline( LINES/2+2, 0 , ACS_HLINE, COLS);
 
@@ -117,6 +123,7 @@ void init_affichage(){
 	log_mips = malloc(COLS);
 	*log_mips = (char *) malloc(COLS-10);
 	nb_log=1;
+	log_current = (char *) malloc(COLS-10);
 	/*nodelay(stdscr,TRUE);*/
 	start_affichage();
 	update_affichage();

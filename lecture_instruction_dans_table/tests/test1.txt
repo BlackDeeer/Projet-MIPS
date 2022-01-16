@@ -4,5 +4,5 @@ ADDI $63,$5,0
 
 ADD $44,$5,$34
 # instruction inconnue
-MULT $2 $5
+MULT $2 
 NOP 

@@ -6,92 +6,74 @@
 #include "../fonctions/header/registres.h"
 #include "../fonctions/header/affichage.h"
 #include "../fonctions/header/conversion.h"
+#include "operation.h"
+#include "traduction.h"
 
 
 int main(){
-
-    initialisation_reg();
-    initialisation_mem();
-    init_affichage();
-    int key;
-    int fin = FALSE;
-    while (key != 'q' && !fin){
     
     /*
-    int k=0;
-    for(k=1;k<32;k++){
-        ecriture_reg(k-1,k*2);
-        update_affichage();
-        wgetch(stdscr);
-    }
+    ADDI $2,$0,20
+    ADDI $3,$0,15
+    ADD $4,$2,$3
     */
+    /*char* tableauHexa[4] = {"20020014","2003000F","00432020","\0"};*/
+
+    char** tableauHexa = traduction("tests/hexa_in.txt");
+    nodelay(stdscr,FALSE);
+    getch();
+    initialisation_reg(); /* initailisation des registres */
+    initialisation_mem(); /* initailisation de la mémoire */
+    init_affichage(); /* initialisation de l'affichage (ncurses) */
+    
+    
+    int key; /* Contiendra la touche du clavier capturée par getch() */
+
+    int fin = FALSE; /* indiquera la fin de l'éxécution du code */
+    while (key != 'q' && !fin){
+
+        /* initialisation */
+        char instruction[10];
+        char bin_instruction[32];
+        char opcode[7];
 
 
-    /* -------------------------------------- DEBUT LECTURE LIGNE PAR LIGNE ---------------------------------*/
-    char* fichier = "hexa_in.txt";
-    FILE * fichier_txt;
-    char *instruction = malloc(8);
-    char *bin_instruction = malloc(32); 
-    char *opcode = malloc(6);
+        /* Tant qu'il y a des instructions : */
+        while(tableauHexa[PC/4][0] != '\0'){
+            IR = tableauHexa[PC/4]; /* on recupère l'instruction correspondant au PC*/
 
-	fichier_txt = fopen(fichier,"r"); /* Ouverture du fichier assembleur */
+            hexa_to_bin(8,IR,bin_instruction,32); /* traduction en binaire */
 
-	if (fichier_txt == NULL){
-		fprintf(stderr,"Impossible d'ouvrir le fichier : '%s'\n",fichier);
-		exit(EXIT_FAILURE);
-	}
-
-	/* Tant qu'il existe des fragments à prendre dans le fichier : */
-	while(fgets(instruction, 10, fichier_txt) != NULL){
-        if (instruction[0] != '\n'){
-            /*hexa_to_bin(8,instruction,bin_instruction,32);*/
-
-            bin_instruction = "00100001000010000000000000000101";
+            /* On cherche l'opcode */
             int k;
             for (k=0;k<6;k++){
                 opcode[k] = bin_instruction[k];
             }
-            if (strcmp(opcode,"000000")!=0){
-                
-                if(strcmp(opcode,"001000")==0){
-                    char *bin_rs = malloc(5);
-                    char *bin_rd = malloc(5);
-                    char *bin_imm = malloc(16);
-
-                    for (k=6;k<11;k++){
-                        bin_rs[k-6] = bin_instruction[k];
-                    }
-                    for (k=11;k<16;k++){
-                        bin_rd[k-11] = bin_instruction[k];
-                    }
-                    for (k=16;k<32;k++){
-                        bin_imm[k-16] = bin_instruction[k];
-                    }
-                    
-                    int rs = bin_to_int(bin_rs,5);
-                    int rd = bin_to_int(bin_rd,5);
-                    int imm = bin_to_int(bin_imm,16);
-
-
-                    wgetch(stdscr);
-                    ecriture_reg(rd,lecture_reg(rs)+imm);
-                    IR = instruction;
-                    PC+=4;
-                    update_affichage(rd);
-                    char *log_current = (char *) malloc(COLS-10);
-                    sprintf(log_current,"Le registre $%d a pris la valeur du registre $%d + %d\t%s",rd,rs,imm,instruction);
-                    print_log(log_current);
+            opcode[k+1]='\0';
+            if (!strcmp(opcode,"000000")){ /* Cas des instruction de type R ou l'opcode est à la fin */
+                for (k=0;k<6;k++){
+                opcode[k] = bin_instruction[26+k];
                 }
             }
-        }
-        
-    
-	}
-    fin = TRUE;
-	fclose(fichier_txt);
+            
 
-    key = wgetch(stdscr);
+            /* On cherche la bonne instruction à éxécuter */    
+            if(!strcmp(opcode,"001000")){
+                ADDI(bin_instruction,IR);
+                print_log(log_current);
+            } else if (!strcmp(opcode,"100000")){
+                ADD(bin_instruction,IR);
+                print_log(log_current);
+            }
+                       
+            getch();
+            PC+=4;
+        }
+        fin = TRUE;
+
+        key = wgetch(stdscr);
     }
+
     nodelay(stdscr, FALSE);
     getch();
     endwin();

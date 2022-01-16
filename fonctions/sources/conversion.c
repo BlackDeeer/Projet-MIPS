@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 #include <ctype.h>
 
@@ -94,7 +95,7 @@ void bin_to_hexa(int length, int bin_operation[], char hexa_operation[] )
 }
 
 
-void hexa_to_bin(int length, char *hexa, int bin[32], int length_bin)
+void hexa_to_bin(int length, char *hexa, char bin[32], int length_bin)
 {
     /* Initialisation des variables */
     int i,j,x,indice_bin = 0;
@@ -116,40 +117,40 @@ void hexa_to_bin(int length, char *hexa, int bin[32], int length_bin)
             switch(tolower(hexa[i]))
                 {
                     case 'a':
-                        bin[indice_bin] = 1;
-                        bin[indice_bin + 1] = 0;
-                        bin[indice_bin + 2] = 1;
-                        bin[indice_bin + 3] = 0;
+                        bin[indice_bin] = '1';
+                        bin[indice_bin + 1] = '0';
+                        bin[indice_bin + 2] = '1';
+                        bin[indice_bin + 3] = '0';
                         break;
                     case 'b':
-                        bin[indice_bin] = 1;
-                        bin[indice_bin + 1] = 0;
-                        bin[indice_bin + 2] = 1;
-                        bin[indice_bin + 3] = 1;
+                        bin[indice_bin] = '1';
+                        bin[indice_bin + 1] = '0';
+                        bin[indice_bin + 2] = '1';
+                        bin[indice_bin + 3] = '1';
                         break;
                     case 'c':
-                        bin[indice_bin] = 1;
-                        bin[indice_bin + 1] = 1;
-                        bin[indice_bin + 2] = 0;
-                        bin[indice_bin + 3] = 0;
+                        bin[indice_bin] = '1';
+                        bin[indice_bin + 1] = '1';
+                        bin[indice_bin + 2] = '0';
+                        bin[indice_bin + 3] = '0';
                         break;
                     case 'd':
-                        bin[indice_bin] = 1;
-                        bin[indice_bin + 1] = 1;
-                        bin[indice_bin + 2] = 0;
-                        bin[indice_bin + 3] = 1;
+                        bin[indice_bin] = '1';
+                        bin[indice_bin + 1] = '1';
+                        bin[indice_bin + 2] = '0';
+                        bin[indice_bin + 3] = '1';
                         break;
                     case 'e':
-                        bin[indice_bin] = 1;
-                        bin[indice_bin + 1] = 1;
-                        bin[indice_bin + 2] = 1;
-                        bin[indice_bin + 3] = 0;
+                        bin[indice_bin] = '1';
+                        bin[indice_bin + 1] = '1';
+                        bin[indice_bin + 2] = '1';
+                        bin[indice_bin + 3] = '0';
                         break;
                     case 'f':
-                        bin[indice_bin] = 1;
-                        bin[indice_bin + 1] = 1;
-                        bin[indice_bin + 2] = 1;
-                        bin[indice_bin + 3] = 1;
+                        bin[indice_bin] = '1';
+                        bin[indice_bin + 1] = '1';
+                        bin[indice_bin + 2] = '1';
+                        bin[indice_bin + 3] = '1';
                         break;
                     /* Si hexa[i] n'est pas égale aux caractères précédents alors c'est un entier que l'on va transformer en binaire */
                     default:
@@ -162,6 +163,7 @@ void hexa_to_bin(int length, char *hexa, int bin[32], int length_bin)
                             for(j= indice_bin + 3 ; j >= indice_bin ; j--)    
                             {    
                                 bin[j] = x % 2;
+                                bin[j] += 48;
                                 x = x/2;
                             }   
                             

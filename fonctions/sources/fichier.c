@@ -39,14 +39,38 @@ void ecriture_fichier(char nomFichier[], char *tableauHexa[], int taille) {
 		fprintf(stderr,"Probleme lors de l'ouverture du fichier :'%s' pour l'écriture\n",nomFichier);
 		exit(EXIT_FAILURE);
 	}
-
+	
 	/*Ecriture du tableau dans le fichier*/
-	while (tableauHexa[i] != NULL) 
+	while (i<taille) 
 	{
 		fprintf(resultats, "%s\n", tableauHexa[i]);
 		i++;
 	}
+	
+	/*Fermeture*/
+	fclose(resultats);
+}
 
+void ecriture_fichier_int(char nomFichier[], int *tableauInt, int taille) {
+	int i = 0;
+	FILE * resultats; 
+	
+	/*Ouverture en écriture*/
+	resultats = fopen( nomFichier, "w");
+
+	/*Gestion d'erreurs à l'ouverture*/
+	if (resultats == NULL)  {
+		fprintf(stderr,"Probleme lors de l'ouverture du fichier :'%s' pour l'écriture\n",nomFichier);
+		exit(EXIT_FAILURE);
+	}
+	
+	/*Ecriture du tableau dans le fichier*/
+	while (i<taille) 
+	{
+		fprintf(resultats, "%8d\n", tableauInt[i]);
+		i++;
+	}
+	
 	/*Fermeture*/
 	fclose(resultats);
 }

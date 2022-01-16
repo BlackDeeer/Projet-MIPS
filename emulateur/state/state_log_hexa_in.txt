@@ -1,0 +1,88 @@
+I=20630002	Le registre $3 a pris la valeur du registre $3 + 2
+I=2004002C	Le registre $4 a pris la valeur du registre $0 + 44
+I=10830008	 Si le registre $4 est égal au registre $3, alors PC est incrémenté de la valeur de l'offset 
+I=08000000	 Jump au PC = 0
+I=20630002	Le registre $3 a pris la valeur du registre $3 + 2
+I=2004002C	Le registre $4 a pris la valeur du registre $0 + 44
+I=10830008	 Si le registre $4 est égal au registre $3, alors PC est incrémenté de la valeur de l'offset 
+I=08000000	 Jump au PC = 0
+I=20630002	Le registre $3 a pris la valeur du registre $3 + 2
+I=2004002C	Le registre $4 a pris la valeur du registre $0 + 44
+I=10830008	 Si le registre $4 est égal au registre $3, alors PC est incrémenté de la valeur de l'offset 
+I=08000000	 Jump au PC = 0
+I=20630002	Le registre $3 a pris la valeur du registre $3 + 2
+I=2004002C	Le registre $4 a pris la valeur du registre $0 + 44
+I=10830008	 Si le registre $4 est égal au registre $3, alors PC est incrémenté de la valeur de l'offset 
+I=08000000	 Jump au PC = 0
+I=20630002	Le registre $3 a pris la valeur du registre $3 + 2
+I=2004002C	Le registre $4 a pris la valeur du registre $0 + 44
+I=10830008	 Si le registre $4 est égal au registre $3, alors PC est incrémenté de la valeur de l'offset 
+I=08000000	 Jump au PC = 0
+I=20630002	Le registre $3 a pris la valeur du registre $3 + 2
+I=2004002C	Le registre $4 a pris la valeur du registre $0 + 44
+I=10830008	 Si le registre $4 est égal au registre $3, alors PC est incrémenté de la valeur de l'offset 
+I=08000000	 Jump au PC = 0
+I=20630002	Le registre $3 a pris la valeur du registre $3 + 2
+I=2004002C	Le registre $4 a pris la valeur du registre $0 + 44
+I=10830008	 Si le registre $4 est égal au registre $3, alors PC est incrémenté de la valeur de l'offset 
+I=08000000	 Jump au PC = 0
+I=20630002	Le registre $3 a pris la valeur du registre $3 + 2
+I=2004002C	Le registre $4 a pris la valeur du registre $0 + 44
+I=10830008	 Si le registre $4 est égal au registre $3, alors PC est incrémenté de la valeur de l'offset 
+I=08000000	 Jump au PC = 0
+I=20630002	Le registre $3 a pris la valeur du registre $3 + 2
+I=2004002C	Le registre $4 a pris la valeur du registre $0 + 44
+I=10830008	 Si le registre $4 est égal au registre $3, alors PC est incrémenté de la valeur de l'offset 
+I=08000000	 Jump au PC = 0
+I=20630002	Le registre $3 a pris la valeur du registre $3 + 2
+I=2004002C	Le registre $4 a pris la valeur du registre $0 + 44
+I=10830008	 Si le registre $4 est égal au registre $3, alors PC est incrémenté de la valeur de l'offset 
+I=08000000	 Jump au PC = 0
+I=20630002	Le registre $3 a pris la valeur du registre $3 + 2
+I=2004002C	Le registre $4 a pris la valeur du registre $0 + 44
+I=10830008	 Si le registre $4 est égal au registre $3, alors PC est incrémenté de la valeur de l'offset 
+I=08000000	 Jump au PC = 0
+I=20630002	Le registre $3 a pris la valeur du registre $3 + 2
+I=2004002C	Le registre $4 a pris la valeur du registre $0 + 44
+I=10830008	 Si le registre $4 est égal au registre $3, alors PC est incrémenté de la valeur de l'offset 
+I=08000000	 Jump au PC = 0
+I=20630002	Le registre $3 a pris la valeur du registre $3 + 2
+I=2004002C	Le registre $4 a pris la valeur du registre $0 + 44
+I=10830008	 Si le registre $4 est égal au registre $3, alors PC est incrémenté de la valeur de l'offset 
+I=08000000	 Jump au PC = 0
+I=20630002	Le registre $3 a pris la valeur du registre $3 + 2
+I=2004002C	Le registre $4 a pris la valeur du registre $0 + 44
+I=10830008	 Si le registre $4 est égal au registre $3, alors PC est incrémenté de la valeur de l'offset 
+I=08000000	 Jump au PC = 0
+I=20630002	Le registre $3 a pris la valeur du registre $3 + 2
+I=2004002C	Le registre $4 a pris la valeur du registre $0 + 44
+I=10830008	 Si le registre $4 est égal au registre $3, alors PC est incrémenté de la valeur de l'offset 
+I=08000000	 Jump au PC = 0
+I=20630002	Le registre $3 a pris la valeur du registre $3 + 2
+I=2004002C	Le registre $4 a pris la valeur du registre $0 + 44
+I=10830008	 Si le registre $4 est égal au registre $3, alors PC est incrémenté de la valeur de l'offset 
+I=08000000	 Jump au PC = 0
+I=20630002	Le registre $3 a pris la valeur du registre $3 + 2
+I=2004002C	Le registre $4 a pris la valeur du registre $0 + 44
+I=10830008	 Si le registre $4 est égal au registre $3, alors PC est incrémenté de la valeur de l'offset 
+I=08000000	 Jump au PC = 0
+I=20630002	Le registre $3 a pris la valeur du registre $3 + 2
+I=2004002C	Le registre $4 a pris la valeur du registre $0 + 44
+I=10830008	 Si le registre $4 est égal au registre $3, alors PC est incrémenté de la valeur de l'offset 
+I=08000000	 Jump au PC = 0
+I=20630002	Le registre $3 a pris la valeur du registre $3 + 2
+I=2004002C	Le registre $4 a pris la valeur du registre $0 + 44
+I=10830008	 Si le registre $4 est égal au registre $3, alors PC est incrémenté de la valeur de l'offset 
+I=08000000	 Jump au PC = 0
+I=20630002	Le registre $3 a pris la valeur du registre $3 + 2
+I=2004002C	Le registre $4 a pris la valeur du registre $0 + 44
+I=10830008	 Si le registre $4 est égal au registre $3, alors PC est incrémenté de la valeur de l'offset 
+I=08000000	 Jump au PC = 0
+I=20630002	Le registre $3 a pris la valeur du registre $3 + 2
+I=2004002C	Le registre $4 a pris la valeur du registre $0 + 44
+I=10830008	 Si le registre $4 est égal au registre $3, alors PC est incrémenté de la valeur de l'offset 
+I=08000000	 Jump au PC = 0
+I=20630002	Le registre $3 a pris la valeur du registre $3 + 2
+I=2004002C	Le registre $4 a pris la valeur du registre $0 + 44
+I=10830008	 Si le registre $4 est égal au registre $3, alors PC est incrémenté de la valeur de l'offset 
+I=00642820	Le registre $5 a pris la valeur du registre $3 + 4

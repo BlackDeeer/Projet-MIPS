@@ -6,6 +6,7 @@
 #include "../fonctions/header/registres.h"
 #include "../fonctions/header/affichage.h"
 #include "../fonctions/header/conversion.h"
+#include "../fonctions/header/fichier.h"
 #include "operation.h"
 #include "traduction.h"
 
@@ -19,7 +20,8 @@ int main(){
     */
     /*char* tableauHexa[4] = {"20020014","2003000F","00432020","\0"};*/
 
-    char** tableauHexa = traduction("tests/hexa_in.txt");
+    char* fichier = "tests/hexa_in.txt";
+    char** tableauHexa = traduction(fichier);
     nodelay(stdscr,FALSE);
     getch();
     initialisation_reg(); /* initailisation des registres */
@@ -33,7 +35,6 @@ int main(){
     while (key != 'q' && !fin){
 
         /* initialisation */
-        char instruction[10];
         char bin_instruction[32];
         char opcode[7];
 
@@ -56,7 +57,6 @@ int main(){
                 }
             }
             
-
             /* On cherche la bonne instruction à éxécuter */    
             if(!strcmp(opcode,"001000")){
                 ADDI(bin_instruction,IR);
@@ -64,10 +64,20 @@ int main(){
             } else if (!strcmp(opcode,"100000")){
                 ADD(bin_instruction,IR);
                 print_log(log_current);
+            } else if (!strcmp(opcode,"000100")){
+                BEQ(bin_instruction,IR);
+                print_log(log_current);
+            } else if (!strcmp(opcode,"000101")){
+                BNE(bin_instruction,IR);
+                print_log(log_current);
+            }else if (!strcmp(opcode,"000010")){
+                J(bin_instruction,IR);
+                print_log(log_current);
             }
+            PC+=4;
                        
             getch();
-            PC+=4;
+            
         }
         fin = TRUE;
 
@@ -77,6 +87,22 @@ int main(){
     nodelay(stdscr, FALSE);
     getch();
     endwin();
+
+    char fichier_state[] = "state/state_reg_";
+	strcat(fichier_state,fichier+6);
+	ecriture_fichier_int(fichier_state,tableau_reg,32);
+	printf("Ecriture dans '%s' OK\n",fichier_state);
+
+    strcpy(fichier_state,"state/state_mem_");
+	strcat(fichier_state,fichier+6);
+	ecriture_fichier_int(fichier_state,tableau_mem,32);
+	printf("Ecriture dans '%s' OK\n",fichier_state);
+
+    strcpy(fichier_state,"state/state_log_");
+	strcat(fichier_state,fichier+6);
+	ecriture_fichier(fichier_state,log_mips,nb_log-1);
+	printf("Ecriture dans '%s' OK\n",fichier_state);
+
     return(0);
 
 }

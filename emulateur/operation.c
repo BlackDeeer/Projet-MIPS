@@ -1,4 +1,7 @@
-#include 
+#include "../fonctions/header/memoire.h"
+#include "../fonctions/header/registres.h"
+#include "../fonctions/header/affichage.h"
+#include "../fonctions/header/conversion.h"
 
 
 void ADD(char* bin_instruction, char *instruction)
@@ -76,9 +79,8 @@ void ADDI( char* bin_instruction, char *instruction)
     /* Ecriture en registres et affichage*/
     ecriture_reg(rt,lecture_reg(rs)+imm);
     update_affichage(rt);
-    sprintf(log_current,"Le registre $%d a pris la valeur du registre $%d + %d\t%s",rd,rs,imm,instruction);
+    sprintf(log_current,"Le registre $%d a pris la valeur du registre $%d + %d\t%s",rt,rs,imm,instruction);
 }
-
 
 void AND(char* bin_instruction, char *instruction)
 {
@@ -132,7 +134,7 @@ void AND(char* bin_instruction, char *instruction)
     }
 
     /* Ecriture en registres et affichage*/
-    ecriture_reg(rd, bin_to_int(bin_valeur_rd))
+    /*ecriture_reg(rd, strtol(bin_valeur_rd,NULL,2))*/
     update_affichage(rd);
     sprintf(log_current,"I=%s\tLe registre $%d a pris la valeur du registre $%d AND la valeur du registre $%d",instruction,rd,rs,rt);
 }
@@ -171,7 +173,7 @@ void BEQ(char* bin_instruction, char *instruction)
     offset = bin_to_int(bin_offset,16);
 
     /* Branch on Equal */
-    if ( lecture_reg(rs) == lecteur_reg(rt))
+    if ( lecture_reg(rs) == lecture_reg(rt))
     {
         PC = PC + offset;
     }
@@ -291,7 +293,7 @@ void BNE(char* bin_instruction, char *instruction)
     offset = bin_to_int(bin_offset,16);
 
     /* Branch on Not Equal */
-    if ( lecture_reg(rs) != lecteur_reg(rt))
+    if ( lecture_reg(rs) != lecture_reg(rt))
     {
         PC = PC + offset;
     }
@@ -329,8 +331,8 @@ void DIV(char* bin_instruction, char *instruction)
 
     /* Opération de division */
 
-    ecriture_reg(33, lecteur_reg(rs) / lecture_reg(rt) ); /* On place le quotient de la division dans LO */ 
-    ecriture_reg(32, lecteur_reg(rs) % lecture_reg(rt) ); /* On place le reste de la division dans HI */
+    ecriture_reg(33, lecture_reg(rs) / lecture_reg(rt) ); /* On place le quotient de la division dans LO */ 
+    ecriture_reg(32, lecture_reg(rs) % lecture_reg(rt) ); /* On place le reste de la division dans HI */
 
     /* Affichage*/
     update_affichage(32); 
@@ -355,7 +357,7 @@ void J(char* bin_instruction, char *instruction)
     }
     
     /* Convertion du binaire en entier */
-    index = bin_to_int(bin_jump);
+    index = bin_to_int(bin_jump,26);
     
     /* Jump */
 

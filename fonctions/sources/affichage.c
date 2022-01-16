@@ -17,8 +17,8 @@ void start_affichage(){
 	init_pair(4,COLOR_RED,COLOR_BLACK);
 
 	attron(COLOR_PAIR(1) | A_BOLD);
-	fenReg = subwin(stdscr, 3*LINES / 5+2, COLS /2 - 1, 0,0);
-	fenMem = subwin(stdscr, 3*LINES / 5+2, COLS /2 - 1, 0,COLS/2+1);
+	fenReg = subwin(stdscr, 3*LINES / 5+2, COLS /2 -1, 0,0);
+	fenMem = subwin(stdscr, 3*LINES / 5+2, COLS /2 -1, 0,COLS/2+1);
 	fenLog = subwin(stdscr, 2*LINES / 5-2, COLS, 3*LINES/5+2,0);
 
 	box(fenReg, ACS_VLINE, ACS_HLINE);
@@ -70,7 +70,7 @@ void update_affichage(registre_mod){
 	wattron(fenReg,COLOR_PAIR(3)|A_BOLD);
 	mvwprintw(fenReg,paddingLin, paddingCol + 4*interC,"HI : %8d",tableau_reg[32]);
 	mvwprintw(fenReg,paddingLin + interL, paddingCol + 4*interC,"LO : %8d",tableau_reg[33]);
-	if (k == 34){
+	if (registre_mod == 34){
 		wattron(fenReg,COLOR_PAIR(4)|A_BOLD);
 	} else {
 		wattron(fenReg,COLOR_PAIR(3) | A_BOLD);
@@ -124,7 +124,7 @@ void init_affichage(){
 	*log_mips = (char *) malloc(COLS-10);
 	nb_log=1;
 	log_current = (char *) malloc(COLS-10);
-	/*nodelay(stdscr,TRUE);*/
+	nodelay(stdscr,FALSE);
 	start_affichage();
 	update_affichage();
 	
@@ -135,6 +135,12 @@ void init_affichage(){
 
 
 void print_log(char *str){
+	werase(fenLog);
+	wattron(fenLog,COLOR_PAIR(1) | A_BOLD);
+	box(fenLog, ACS_VLINE, ACS_HLINE);
+	mvwprintw(fenLog,0,5,"| LOG |");
+	wattron(fenLog,COLOR_PAIR(2)|A_NORMAL);
+
 	char **log_temp, **log_temp2;
 	int k;
 	int lmax = 2*LINES/5-4;

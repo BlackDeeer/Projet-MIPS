@@ -4,6 +4,7 @@
 #include "../fonctions/header/conversion.h"
 
 
+
 void ADD(char* bin_instruction, char *instruction)
 {
     int k,j = 0;
@@ -39,8 +40,8 @@ void ADD(char* bin_instruction, char *instruction)
 
     /* Ecriture en registres et affichage*/
     ecriture_reg(rd,lecture_reg(rs) + lecture_reg(rt));
-    update_affichage(rt);
-    sprintf(log_current,"I=%s\t Le registre $%d a pris la valeur du registre $%d + %d\t%s",rd,rs,rt,instruction);
+    update_affichage(rd);
+    sprintf(log_current,"I=%s\tLe registre $%d a pris la valeur du registre $%d + la valeur du registre $%d",instruction,rd,rs,rt);
 }
 
 void ADDI( char* bin_instruction, char *instruction)
@@ -79,7 +80,7 @@ void ADDI( char* bin_instruction, char *instruction)
     /* Ecriture en registres et affichage*/
     ecriture_reg(rt,lecture_reg(rs)+imm);
     update_affichage(rt);
-    sprintf(log_current,"I=%s\t Le registre $%d a pris la valeur du registre $%d + %d\t%s",rt,rs,imm,instruction);
+    sprintf(log_current,"I=%s\tLe registre $%d a pris la valeur du registre $%d + %d",instruction,rt,rs,imm);
 }
 
 void AND(char* bin_instruction, char *instruction)
@@ -172,14 +173,14 @@ void BEQ(char* bin_instruction, char *instruction)
     rt = bin_to_int(bin_rt,5);
     offset = bin_to_int(bin_offset,16);
 
+    update_affichage(34); 
     /* Branch on Equal */
     if ( lecture_reg(rs) == lecture_reg(rt))
     {
-        PC = PC + offset;
+        PC = PC + offset - 4;
     }
 
     /* Affichage*/
-    update_affichage(34); 
     sprintf(log_current,"I=%s\t Si le registre $%d est égal au registre $%d, alors PC est incrémenté de la valeur de l'offset ",instruction,rs,rt);
 }
 
@@ -210,14 +211,14 @@ void BGTZ(char* bin_instruction, char *instruction)
     rs = bin_to_int(bin_rs,5);
     offset = bin_to_int(bin_offset,16);
 
+    update_affichage(34); 
     /* Branch on Greater Than Zero */
     if(lecture_reg(rs) > 0)
     {
-        PC = PC + offset;
+        PC = PC + offset - 4;
     }
     
     /* Affichage*/
-    update_affichage(34); 
     sprintf(log_current,"I=%s\t Si le registre $%d est supérieur à 0, alors PC est incrémenté de la valeur de l'offset",instruction,rs);
 }
 
@@ -248,14 +249,15 @@ void BLEZ(char* bin_instruction, char *instruction)
     rs = bin_to_int(bin_rs,5);
     offset = bin_to_int(bin_offset,16);
 
+    update_affichage(34); 
     /* Branch on Less Than or Equal to Zero */
     if(lecture_reg(rs) <= 0)
     {
-        PC = PC + offset;
+        PC = PC + offset - 4;
     }
     
     /* Affichage*/
-    update_affichage(34); 
+    
     sprintf(log_current,"I=%s\t Si le registre $%d est inférieur ou égale à 0, alors PC est incrémenté de la valeur de l'offset",instruction,rs);
 }
 
@@ -292,14 +294,14 @@ void BNE(char* bin_instruction, char *instruction)
     rt = bin_to_int(bin_rt,5);
     offset = bin_to_int(bin_offset,16);
 
+    update_affichage(34); 
     /* Branch on Not Equal */
     if ( lecture_reg(rs) != lecture_reg(rt))
     {
-        PC = PC + offset;
+        PC = PC + offset - 4;
     }
 
     /* Affichage*/
-    update_affichage(34); 
     sprintf(log_current,"I=%s\t Si le registre $%d est différent du registre $%d, alors PC est incrémenté de la valeur de l'offset ",instruction,rs,rt);
 }
 
@@ -359,14 +361,17 @@ void J(char* bin_instruction, char *instruction)
     /* Convertion du binaire en entier */
     index = bin_to_int(bin_jump,26);
     
+    update_affichage(34); 
     /* Jump */
 
-    PC = index;
+    PC = index - 4;
 
     /* Affichage*/
-    update_affichage(34); 
-    sprintf(log_current,"I=%s\t Jump au PC = %d ",instruction,index);
+    sprintf(log_current,"I=%s\t Jump au PC = %d",instruction,index);
 }
+
+
+
 
 void JAL(char* bin_instruction, char *instruction)
 {
@@ -385,7 +390,7 @@ void JAL(char* bin_instruction, char *instruction)
     }
     
     /* Convertion du binaire en entier */
-    index = bin_to_int(bin_jump);
+    index = bin_to_int(bin_jump,26);
     
     /* Jump and Link */
 
@@ -415,7 +420,7 @@ void JR(char* bin_instruction, char *instruction)
     }
     
     /* Convertion du binaire en entier */
-    rs = bin_to_int(bin_rs);
+    rs = bin_to_int(bin_rs,5);
     
     /* Jump Register */
 
@@ -423,7 +428,7 @@ void JR(char* bin_instruction, char *instruction)
 
     /* Affichage*/
     update_affichage(34); 
-    sprintf(log_current,"I=%s\t Jump and Link au PC = %d",instruction,index);
+    sprintf(log_current,"I=%s\t Jump and Link au PC = %d",instruction,lecture_reg(rs));
 }
 
 void LUI(char* bin_instruction, char *instruction)
@@ -431,7 +436,7 @@ void LUI(char* bin_instruction, char *instruction)
     int k,j = 0;
 
     /* Initialisation des registres en entier de l'opération */
-    int rt,imm;
+    int rt,imm,imm_upp;
 
     /* Initialisation des registres en binaire de l'opération  */     
     char bin_rt[5];
@@ -444,7 +449,7 @@ void LUI(char* bin_instruction, char *instruction)
     }
     j = 0;
     for(k=16;k<32;k++){
-        bin_offset[j] = bin_instruction[k];
+        bin_imm[j] = bin_instruction[k];
         j++;
     }
   
@@ -500,7 +505,7 @@ void LW( char* bin_instruction, char *instruction)
 
     /* Ecriture en registres et affichage*/
     valeur_mem = lecture_mem(base + offset);
-    ecriture_reg(rt, load);
+    ecriture_reg(rt, valeur_mem);
 
 
     update_affichage(rt);
@@ -519,7 +524,7 @@ void MFHI( char* bin_instruction, char *instruction)
 
     /* Lecture de la valeur des registres */
     for(k=16;k<21;k++){
-        bin_offset[j] = bin_instruction[k];
+        bin_rd[j] = bin_instruction[k];
         j++;
     }
     
@@ -536,7 +541,7 @@ void MFHI( char* bin_instruction, char *instruction)
     sprintf(log_current,"I=%s\t La valeur du registre HI a été copié dans le registre $%d",instruction,rd);
 }
 
-void MFHI( char* bin_instruction, char *instruction)
+void MFLO( char* bin_instruction, char *instruction)
 {
     int k,j,LO= 0;
 
@@ -548,7 +553,7 @@ void MFHI( char* bin_instruction, char *instruction)
 
     /* Lecture de la valeur des registres */
     for(k=16;k<21;k++){
-        bin_offset[j] = bin_instruction[k];
+        bin_rd[j] = bin_instruction[k];
         j++;
     }
     
@@ -598,14 +603,14 @@ void MULT(char* bin_instruction, char *instruction)
     result = lecture_reg(rs)*lecture_reg(rt);
 
     
-    result_HI = (result / pow(2,32)) % 1;
+    /*result_HI = (result / pow(2,32)) % 1;*/
     result_LO = result - result_HI;
 
     ecriture_reg(33, result_LO);
     ecriture_reg(32, result_HI);
     update_affichage(32);
     update_affichage(33);
-    sprintf(log_current,"I=%s\t Les registres HI et LO ont pris la valeur du registre $%d * la valeur du registre %d",instruction,rs,rt,);
+    sprintf(log_current,"I=%s\t Les registres HI et LO ont pris la valeur du registre $%d * la valeur du registre %d",instruction,rs,rt);
 }
 
 void NOP(char* bin_instruction, char *instruction)
@@ -705,7 +710,7 @@ void SUB(char* bin_instruction, char *instruction)
     /* Ecriture en registres et affichage*/
     ecriture_reg(rd,lecture_reg(rs) - lecture_reg(rt));
     update_affichage(rt);
-    sprintf(log_current,"I=%s\t Le registre $%d a pris la valeur du registre $%d - %d",rd,rs,rt,instruction);
+    sprintf(log_current,"I=%s\t Le registre $%d a pris la valeur du registre $%d - %d",instruction,rd,rs,rt);
 }
 
 void SW( char* bin_instruction, char *instruction)
@@ -845,11 +850,11 @@ void SLT(char* bin_instruction, char *instruction)
 
     if(lecture_reg(rs) < lecture_reg(rt))
     {
-        ecriture_reg(rd,1)
+        ecriture_reg(rd,1);
     }
     else
     {
-        ecriture_reg(rd,0)
+        ecriture_reg(rd,0);
     }
 
     update_affichage(rd);
@@ -859,6 +864,7 @@ void SLT(char* bin_instruction, char *instruction)
 void SLL(char* bin_instruction, char *instruction)
 {
     int k,j,i,l = 0;
+    int temp;
 
     /* Initialisation des registres en entier de l'opération */
     int rt,rd,sa;
@@ -919,6 +925,7 @@ void SLL(char* bin_instruction, char *instruction)
 void SRL(char* bin_instruction, char *instruction)
 {
     int k,j,i,l = 0;
+    int temp;
 
     /* Initialisation des registres en entier de l'opération */
     int rt,rd,sa;
@@ -979,6 +986,7 @@ void ROTR(char* bin_instruction, char *instruction)
 {
     int k,j,i,l = 0;
 
+    int temp;
     /* Initialisation des registres en entier de l'opération */
     int rt,rd,sa;
 

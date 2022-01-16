@@ -17,8 +17,8 @@ void start_affichage(){
 	init_pair(4,COLOR_RED,COLOR_BLACK);
 
 	attron(COLOR_PAIR(1) | A_BOLD);
-	fenReg = subwin(stdscr, 3*LINES / 5+2, COLS /2, 0,0);
-	fenMem = subwin(stdscr, 3*LINES / 5+2, COLS /2, 0,COLS/2+1);
+	fenReg = subwin(stdscr, 3*LINES / 5+2, COLS /2 - 1, 0,0);
+	fenMem = subwin(stdscr, 3*LINES / 5+2, COLS /2 - 1, 0,COLS/2+1);
 	fenLog = subwin(stdscr, 2*LINES / 5-2, COLS, 3*LINES/5+2,0);
 
 	box(fenReg, ACS_VLINE, ACS_HLINE);

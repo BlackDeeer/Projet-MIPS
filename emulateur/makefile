@@ -8,7 +8,7 @@ OBJ = registres.o memoire.o affichage.o conversion.o operation.o traduction.o fi
 OBJFCT = $(OBJDIR)registres.o $(OBJDIR)memoire.o $(OBJDIR)affichage.o $(OBJDIR)conversion.o operation.o traduction.o $(OBJDIR)fichier.o
 
 all: main.o $(OBJ)
-	$(CC) -g main.o $(OBJFCT) $(FLAGS) -o exec -lm -lncurses
+	$(CC) -g main.o $(OBJFCT) $(FLAGS) -o emul-mips -lm -lncurses
 
 main.o: main.c $(HDRDIR)registres.h $(HDRDIR)memoire.h $(HDRDIR)affichage.h $(HDRDIR)conversion.h operation.h traduction.h $(HDRDIR)fichier.h
 	$(CC) $(FLAGS) -c $< -o $@

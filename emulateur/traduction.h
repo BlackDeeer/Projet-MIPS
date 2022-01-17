@@ -3,6 +3,6 @@
 
 
 
-char** traduction(char* fichier);
+char** traduction(char* fichier, char* destHexa);
 
 #endif

@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "../fonctions/header/memoire.h"
 #include "../fonctions/header/registres.h"
 #include "../fonctions/header/affichage.h"
@@ -131,7 +133,7 @@ void AND(char* bin_instruction, char *instruction)
     /* Opération AND bit à bit */
     for(k=0; k < 32; k++)
     {
-        bin_valeur_rd[k] = (bin_valeur_rs[k] & bin_valeur_rt[k])+48;
+        bin_valeur_rd[k] = (bin_valeur_rs[k] & bin_valeur_rt[k]) + 48;
     }
 
     /* Ecriture en registres et affichage*/
@@ -394,12 +396,13 @@ void JAL(char* bin_instruction, char *instruction)
     
     /* Jump and Link */
 
-    ecriture_reg(31,index ); /* On place l'adresse de retour dans le registre 31 */ 
+    ecriture_reg(31,PC+4); /* On place l'adresse de retour dans le registre 31 */ 
 
-    PC = index;
+    update_affichage(34); 
+    PC = index - 4;
 
     /* Affichage*/
-    update_affichage(34); 
+    
     sprintf(log_current,"I=%s\tJump and Link au PC = %d",instruction,index);
 }
 
@@ -424,11 +427,12 @@ void JR(char* bin_instruction, char *instruction)
     
     /* Jump Register */
 
-    PC = lecture_reg(rs); /* On lit la valeur du registre comme nouvelle valeur du PC */ 
+    update_affichage(34); 
+    PC = lecture_reg(rs)-4; /* On lit la valeur du registre comme nouvelle valeur du PC */ 
 
     /* Affichage*/
-    update_affichage(34); 
-    sprintf(log_current,"I=%s\tJump and Link au PC = %d",instruction,lecture_reg(rs));
+    
+    sprintf(log_current,"I=%s\tJump Register au PC = %d",instruction,lecture_reg(rs));
 }
 
 void LUI(char* bin_instruction, char *instruction)
@@ -504,12 +508,12 @@ void LW( char* bin_instruction, char *instruction)
     offset = bin_to_int(bin_offset,16);
 
     /* Ecriture en registres et affichage*/
-    valeur_mem = lecture_mem(base + offset);
+    valeur_mem = lecture_mem(base)>>offset;
     ecriture_reg(rt, valeur_mem);
 
 
     update_affichage(rt);
-    sprintf(log_current,"I=%s\tLe registre $%d a pris la valeur de la case mémoire $%d ",instruction,rt,(base+offset));
+    sprintf(log_current,"I=%s\tLe registre $%d a pris la valeur de la case mémoire $%d + %d ",instruction,rt,base,offset);
 }
 
 void MFHI( char* bin_instruction, char *instruction)
@@ -570,14 +574,14 @@ void MFLO( char* bin_instruction, char *instruction)
 
     /* Affichage */
     update_affichage(rd);
-    sprintf(log_current,"I=%s\tLa valeur du registre HI a été copié dans le registre $%d",instruction,rd);
+    sprintf(log_current,"I=%s\tLa valeur du registre LO a été copié dans le registre $%d",instruction,rd);
 }
 
 void MULT(char* bin_instruction, char *instruction)
 {
     int k,j = 0;
-    long long int result;
-    long int result_HI, result_LO;
+    int result;
+    int result_HI, result_LO;
 
     /* Initialisation des registres en entier de l'opération */
     int rs,rt;
@@ -605,15 +609,15 @@ void MULT(char* bin_instruction, char *instruction)
 
     result = lecture_reg(rs)*lecture_reg(rt);
 
-    
-    /*result_HI = (result / pow(2,32)) % 1;*/
+    result_HI = result/pow(2,32);
     result_LO = result - result_HI;
+    
 
-    ecriture_reg(33, result_LO);
-    ecriture_reg(32, result_HI);
+    ecriture_reg(33, result_HI);
+    ecriture_reg(32, result_LO);
     update_affichage(32);
     update_affichage(33);
-    sprintf(log_current,"I=%s\tLes registres HI et LO ont pris la valeur du registre $%d * la valeur du registre %d",instruction,rs,rt);
+    sprintf(log_current,"I=%s\tLes registres HI et LO ont pris la valeur du registre $%d * la valeur du registre $%d",instruction,rs,rt);
 }
 
 void NOP(char* bin_instruction, char *instruction)
@@ -636,7 +640,7 @@ void OR(char* bin_instruction, char *instruction)
     /* Initialisation des tableau en binaire des valeurs dans les registres */
     int bin_valeur_rs[32];
     int bin_valeur_rt[32];
-    int bin_valeur_rd[32];
+    char bin_valeur_rd[32];
 
     /* Lecture de la valeur des registres */
     for (k=6;k<11;k++){
@@ -663,16 +667,15 @@ void OR(char* bin_instruction, char *instruction)
     /* Convertion des valeurs en registre en binaire */
     int_to_binary(lecture_reg(rs),32,bin_valeur_rs);
     int_to_binary(lecture_reg(rt),32,bin_valeur_rt);
-    int_to_binary(lecture_reg(rd),32,bin_valeur_rd);
     
     /* Opération OR bit à bit */
     for(k=0; k < 32; k++)
     {
-        bin_valeur_rd[k] = bin_valeur_rs[k] | bin_valeur_rt[k];
+        bin_valeur_rd[k] = (bin_valeur_rs[k] | bin_valeur_rt[k]) + 48;
     }
 
     /* Ecriture en registres et affichage*/
-    /*ecriture_reg(rd, strtol(bin_valeur_rd,NULL,2))*/
+    ecriture_reg(rd, bin_to_int(bin_valeur_rd,32));
     update_affichage(rd);
     sprintf(log_current,"I=%s\tLe registre $%d a pris la valeur du registre $%d OR la valeur du registre $%d",instruction,rd,rs,rt);
 }
@@ -712,8 +715,8 @@ void SUB(char* bin_instruction, char *instruction)
 
     /* Ecriture en registres et affichage*/
     ecriture_reg(rd,lecture_reg(rs) - lecture_reg(rt));
-    update_affichage(rt);
-    sprintf(log_current,"I=%s\tLe registre $%d a pris la valeur du registre $%d - %d",instruction,rd,rs,rt);
+    update_affichage(rd);
+    sprintf(log_current,"I=%s\tLe registre $%d a pris la valeur du registre $%d - la valeur du registre $%d",instruction,rd,rs,rt);
 }
 
 void SW( char* bin_instruction, char *instruction)
@@ -754,9 +757,9 @@ void SW( char* bin_instruction, char *instruction)
 
     /* Ecriture en registres et affichage*/
 
-    ecriture_mem( base + offset ,lecture_reg(rt));   
-
-    sprintf(log_current,"I=%s\tLa mémoire $%d a pris la valeur du registre $%d ",instruction,(base+offset),rt);
+    ecriture_mem( base*16 ,lecture_reg(rt)<<offset);   
+    update_affichage();
+    sprintf(log_current,"I=%s\tLa mémoire %d + %d a pris la valeur du registre $%d ",instruction,base,offset,rt);
 }
 
 
@@ -775,7 +778,7 @@ void XOR(char* bin_instruction, char *instruction)
     /* Initialisation des tableau en binaire des valeurs dans les registres */
     int bin_valeur_rs[32];
     int bin_valeur_rt[32];
-    int bin_valeur_rd[32];
+    char bin_valeur_rd[32];
 
     /* Lecture de la valeur des registres */
     for (k=6;k<11;k++){
@@ -802,16 +805,15 @@ void XOR(char* bin_instruction, char *instruction)
     /* Convertion des valeurs en registre en binaire */
     int_to_binary(lecture_reg(rs),32,bin_valeur_rs);
     int_to_binary(lecture_reg(rt),32,bin_valeur_rt);
-    int_to_binary(lecture_reg(rd),32,bin_valeur_rd);
     
     /* Opération XOR bit à bit */
     for(k=0; k < 32; k++)
     {
-        bin_valeur_rd[k] = bin_valeur_rs[k] ^ bin_valeur_rt[k];
+        bin_valeur_rd[k] = (bin_valeur_rs[k] ^ bin_valeur_rt[k]) + 48;
     }
 
     /* Ecriture en registres et affichage*/
-    /*ecriture_reg(rd, strtol(bin_valeur_rd,NULL,2))*/
+    ecriture_reg(rd, bin_to_int(bin_valeur_rd,32));
     update_affichage(rd);
     sprintf(log_current,"I=%s\tLe registre $%d a pris la valeur du registre $%d XOR la valeur du registre $%d",instruction,rd,rs,rt);
 }
@@ -893,6 +895,7 @@ void SLL(char* bin_instruction, char *instruction)
         bin_rd[j] = bin_instruction[k];
         j++;
     }
+    j = 0;
     for (k=21;k<26;k++){
         bin_sa[j] = bin_instruction[k];
         j++;
@@ -906,9 +909,9 @@ void SLL(char* bin_instruction, char *instruction)
 
     /* Convertion des valeurs en registre en binaire */
     
-    int_to_binary(lecture_reg(rt),32,bin_valeur_rt);
+    /*int_to_binary(lecture_reg(rt),32,bin_valeur_rt);*/
 
-    for(i = 0; i <= sa; i++)
+    /* for(i = 0; i <= sa; i++)
     {
         for(l = 31; l > 0; l--)
         {
@@ -916,7 +919,10 @@ void SLL(char* bin_instruction, char *instruction)
             bin_valeur_rt[l] = temp;
         }
         bin_valeur_rt[i] = 0;
-    }
+    } */
+
+    ecriture_reg(rd,lecture_reg(rt)<<sa);
+
 
     /*ecriture_reg(rd, strtol(bin_valeur_rt,NULL,2))*/
 
@@ -927,8 +933,9 @@ void SLL(char* bin_instruction, char *instruction)
 
 void SRL(char* bin_instruction, char *instruction)
 {
-    int k,j,i,l = 0;
-    int temp;
+    int k,j = 0;
+
+    
 
     /* Initialisation des registres en entier de l'opération */
     int rt,rd,sa;
@@ -940,7 +947,6 @@ void SRL(char* bin_instruction, char *instruction)
 
     /* Initialisation des tableau en binaire des valeurs dans les registres */
     
-    int bin_valeur_rt[32];
 
     /* Lecture de la valeur des registres */
     
@@ -954,6 +960,7 @@ void SRL(char* bin_instruction, char *instruction)
         bin_rd[j] = bin_instruction[k];
         j++;
     }
+    j=0;
     for (k=21;k<26;k++){
         bin_sa[j] = bin_instruction[k];
         j++;
@@ -965,21 +972,10 @@ void SRL(char* bin_instruction, char *instruction)
     rd = bin_to_int(bin_rd,5);
     sa = bin_to_int(bin_sa,5);
 
-    /* Convertion des valeurs en registre en binaire */
-    
-    int_to_binary(lecture_reg(rt),32,bin_valeur_rt);
 
-    for(i = 0; i <= sa; i++)
-    {
-        for(l = 0; l < 32; l++)
-        {
-            temp = bin_valeur_rt[l+1];
-            bin_valeur_rt[l] = temp;
-        }
-        bin_valeur_rt[32-i] = 0;
-    }
 
-    /*ecriture_reg(rd, strtol(bin_valeur_rt,NULL,2))*/
+    ecriture_reg(rd,lecture_reg(rt)>>sa);
+
 
     update_affichage(rd);
     sprintf(log_current,"I=%s\tLe registre $%d a pris la valeur du registre $%d >> %d ",instruction,rd,rt,sa);
@@ -1001,6 +997,10 @@ void ROTR(char* bin_instruction, char *instruction)
     /* Initialisation des tableau en binaire des valeurs dans les registres */
     
     int bin_valeur_rt[32];
+    char*  bin_valeur_rt_str = malloc(32);
+
+    int dernier_bit;
+
 
     /* Lecture de la valeur des registres */
     
@@ -1012,8 +1012,10 @@ void ROTR(char* bin_instruction, char *instruction)
     j = 0;
     for(k=16;k<21;k++){
         bin_rd[j] = bin_instruction[k];
+        
         j++;
     }
+    j=0;
     for (k=21;k<26;k++){
         bin_sa[j] = bin_instruction[k];
         j++;
@@ -1025,21 +1027,14 @@ void ROTR(char* bin_instruction, char *instruction)
     rd = bin_to_int(bin_rd,5);
     sa = bin_to_int(bin_sa,5);
 
-    /* Convertion des valeurs en registre en binaire */
+
+    int haut = lecture_reg(rt) >> sa;
+
+    int rotation_bits = lecture_reg(rt) << (32-sa);
+
+    unsigned int resultat =  haut | rotation_bits;
     
-    int_to_binary(lecture_reg(rt),32,bin_valeur_rt);
-
-    for(i = 0; i <= sa; i++)
-    {
-        bin_valeur_rt[32-i] = bin_valeur_rt[i];
-        for(l = 0; l < 32; l++)
-        {
-            temp = bin_valeur_rt[l+1];
-            bin_valeur_rt[l] = temp;
-        }
-    }
-
-    /*ecriture_reg(rd, strtol(bin_valeur_rt,NULL,2))*/
+    ecriture_reg(rd, (int) resultat);
 
     update_affichage(rd);
     sprintf(log_current,"I=%s\tLe registre $%d a pris la valeur du registre $%d << %d ",instruction,rd,rt,sa);

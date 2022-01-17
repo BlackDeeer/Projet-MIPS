@@ -3,7 +3,7 @@
 #include "../fonctions/header/fichier.h"
 #include "../fonctions/header/conversion.h"
 
-#define TAILLE_TABLE 174 /* Taille de la table d'instructions */
+#define TAILLE_TABLE 175 /* Taille de la table d'instructions */
 
 
 /* -------------------------------- Fonction qui permet de découper un string en tableau d'éléments -------------------------- */
@@ -240,10 +240,11 @@ void assembleur_str_to_hexa(char * assembleur_string, char hexa_operation[],char
 		int op[4]; /* Les mêmes "opérandes" en décimal */
 
 		/* --- Même fonctionnement avec 4 itération pour les 4 fois 5 bits à remplir */
-
+		
 		for (i=0;i<4;i++){
 			int * bin_op_temp = NULL;
 			int bin_taille;
+			
 			switch(table[k+3+i][0]){
 				case ('r') : 
 					if (data[table[k+3+i][1]-48][0]!='$'){
@@ -253,7 +254,9 @@ void assembleur_str_to_hexa(char * assembleur_string, char hexa_operation[],char
 						fprintf(stderr,"ERREUR : A la ligne %d, le registre %d doit être compris entre 0 et 63 ...\n",ligne_courante,table[k+3+i][1]-48);
 						exit(EXIT_FAILURE);
 					}
+					
 					op[i] = atoi(data[table[k+3+i][1]-48]+1);
+					
 					bin_taille = 5;
 					++j;
 					break;
@@ -270,6 +273,7 @@ void assembleur_str_to_hexa(char * assembleur_string, char hexa_operation[],char
 					bin_taille = 5;
 					break;
 				case ('0') :
+				
 					op[i] = 0; 
 					bin_taille = 5;
 					break; 
@@ -340,7 +344,7 @@ void assembleur_str_to_hexa(char * assembleur_string, char hexa_operation[],char
 }
 
 
-char** traduction(char* fichier)
+char** traduction(char* fichier, char* destHexa)
 {
 
 	/* --- DECLARATION */
@@ -348,7 +352,6 @@ char** traduction(char* fichier)
 	char tableTxt[10000]; /* Table d'instruction en chaine de caractères */
 	char *table[TAILLE_TABLE]; /* Tableau qui va contenir toute la table d'instruction découpée */
 
-	char resultat[] = "hexa/hexa_"; /* Contiendra le nom du fichier final */
 
 	char * separateurs_data; /* Contiendra les séparateurs nécessaire au découpége de données */
 	
@@ -516,10 +519,18 @@ char** traduction(char* fichier)
 
 	/* Ecriture dans le fichier destination */
 
-    strcpy(resultat,"hexa/hexa_");
-	strcat(resultat,fichier+6);
-	ecriture_fichier(resultat,tableauHexa,ligne_utiles);
-	printf("Ecriture dans '%s' OK\n",resultat);
+
+	if (destHexa!=NULL){
+		ecriture_fichier(destHexa,tableauHexa,ligne_utiles);
+		printf("Ecriture dans '%s' OK\n",destHexa);
+	} else {
+		char resultat[] = "hexa/hexa_";
+		strcat(resultat,fichier+6);
+		ecriture_fichier(resultat,tableauHexa,ligne_utiles);
+		printf("Ecriture dans '%s' OK\n",resultat);
+	}
+
+    
 
     return tableauHexa;
 	

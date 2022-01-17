@@ -43,6 +43,18 @@ void start_affichage(){
 }
 
 void update_affichage(registre_mod){
+
+	werase(fenReg);
+	werase(fenMem);
+	wattron(fenReg,COLOR_PAIR(1) | A_BOLD);
+	wattron(fenMem,COLOR_PAIR(1) | A_BOLD);
+	box(fenReg, ACS_VLINE, ACS_HLINE);
+	box(fenMem, ACS_VLINE, ACS_HLINE);
+	mvwprintw(fenReg,0,5,"| REGISTRES |");
+	mvwprintw(fenMem,0,5,"| MEMOIRE |");
+	wattron(fenReg,COLOR_PAIR(2) | A_NORMAL);
+	wattron(fenMem,COLOR_PAIR(2) | A_NORMAL);
+
 	int nbCol = 5;
 	int nbLin = 8;
 	int paddingCol = 6;
@@ -84,8 +96,8 @@ void update_affichage(registre_mod){
 	k=0;
 	for (i=0;i<4;i++){
 		for (j=0;j<8;j++){
-			mvwprintw(fenMem,paddingLin + interL*j , paddingCol + i*interC,"$%4d : %8d",k,tableau_mem[k/4]);
-			k+=4;
+			mvwprintw(fenMem,paddingLin + interL*j , paddingCol + i*interC,"%4d : %8d",k,tableau_mem[k/16]);
+			k+=16;
 		}
 	}
 	wrefresh(fenReg);
@@ -96,12 +108,12 @@ void update_affichage(registre_mod){
 
 void init_affichage(){
 
+	
 	initscr();
 	cbreak();
-	nodelay(stdscr,FALSE);
-	/*noecho();*/
+	noecho();
 	start_color();
-
+	nodelay(stdscr,TRUE);
 	mvhline( LINES/2-3, 0 , ACS_HLINE, COLS);
 	mvprintw( LINES/2-1, COLS/2-32 , "-- PRESS F11 TO START (OU AFFICHER LA CONSOLE EN PLEIN ECRAN) --");
 	mvprintw( LINES/2-0, COLS/2-10 , "ou q pour quitter ...");
@@ -124,7 +136,6 @@ void init_affichage(){
 	*log_mips = (char *) malloc(COLS-10);
 	nb_log=1;
 	log_current = (char *) malloc(COLS-10);
-	nodelay(stdscr,FALSE);
 	start_affichage();
 	update_affichage();
 	

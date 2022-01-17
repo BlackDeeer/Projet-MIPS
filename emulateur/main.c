@@ -44,6 +44,7 @@ int main(){
             IR = tableauHexa[PC/4]; /* on recupère l'instruction correspondant au PC*/
 
             hexa_to_bin(8,IR,bin_instruction,32); /* traduction en binaire */
+            
 
             /* On cherche l'opcode */
             int k;
@@ -73,7 +74,18 @@ int main(){
             }else if (!strcmp(opcode,"000010")){
                 J(bin_instruction,IR);
                 print_log(log_current);
+            }else if (!strcmp(opcode,"011010")){
+                DIV(bin_instruction,IR);
+                print_log(log_current);
+            }else if (!strcmp(opcode,"010000")){
+                MFHI(bin_instruction,IR);
+                print_log(log_current);
+            }else if (!strcmp(opcode,"100100")){
+                AND(bin_instruction,IR);
+                print_log(log_current);
             }
+
+
             PC+=4;
                        
             getch();

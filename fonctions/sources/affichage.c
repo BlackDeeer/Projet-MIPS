@@ -99,7 +99,7 @@ void init_affichage(){
 	initscr();
 	cbreak();
 	nodelay(stdscr,FALSE);
-	noecho();
+	/*noecho();*/
 	start_color();
 
 	mvhline( LINES/2-3, 0 , ACS_HLINE, COLS);

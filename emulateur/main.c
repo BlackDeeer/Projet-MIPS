@@ -11,7 +11,7 @@
 #include "traduction.h"
 
 
-int main(){
+int main(int argc, char* argv[]){
     
     /*
     ADDI $2,$0,20
@@ -20,7 +20,17 @@ int main(){
     */
     /*char* tableauHexa[4] = {"20020014","2003000F","00432020","\0"};*/
 
-    char* fichier = "tests/hexa_in.txt";
+    
+
+    /* Récupération du nom du fichier assembleur txt */
+	if (argc==1){ /* S'il n'y a pas d'argument alors on signale un erreur et on quitte le programme */
+		fprintf(stderr,"ERREUR : nom du fichier à traduire manquant \n");
+		exit(EXIT_FAILURE);
+	}
+	char* fichier = argv[1]; /* On récupère le nom du fichier */
+
+
+    
     char** tableauHexa = traduction(fichier);
     nodelay(stdscr,FALSE);
     getch();

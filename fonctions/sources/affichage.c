@@ -15,6 +15,7 @@ void start_affichage(){
 	init_pair(2,COLOR_WHITE,COLOR_BLACK);
 	init_pair(3,COLOR_GREEN,COLOR_BLACK);
 	init_pair(4,COLOR_RED,COLOR_BLACK);
+	init_pair(5,COLOR_WHITE,COLOR_RED);
 
 	attron(COLOR_PAIR(1) | A_BOLD);
 	fenReg = subwin(stdscr, 3*LINES / 5+2, COLS /2 -1, 0,0);
@@ -31,8 +32,9 @@ void start_affichage(){
 	mvwprintw(fenMem,0,5,"| MEMOIRE |");
 	
 	mvwprintw(fenLog,0,5,"| LOG |");
+	wattron(fenLog,COLOR_PAIR(5)|A_NORMAL);
+	mvwprintw(fenLog,0,COLS/2-13,"Appuyez sur q pour quitter");
 	wattron(fenLog,COLOR_PAIR(2)|A_NORMAL);
-
 
 	wrefresh(fenReg);
 	wrefresh(fenMem);
@@ -111,9 +113,9 @@ void init_affichage(){
 	
 	initscr();
 	cbreak();
-	noecho();
+	/*noecho();*/
 	start_color();
-	nodelay(stdscr,TRUE);
+	nodelay(stdscr,FALSE);
 	mvhline( LINES/2-3, 0 , ACS_HLINE, COLS);
 	mvprintw( LINES/2-1, COLS/2-32 , "-- PRESS F11 TO START (OU AFFICHER LA CONSOLE EN PLEIN ECRAN) --");
 	mvprintw( LINES/2-0, COLS/2-10 , "ou q pour quitter ...");
@@ -150,6 +152,8 @@ void print_log(char *str){
 	wattron(fenLog,COLOR_PAIR(1) | A_BOLD);
 	box(fenLog, ACS_VLINE, ACS_HLINE);
 	mvwprintw(fenLog,0,5,"| LOG |");
+	wattron(fenLog,COLOR_PAIR(5)|A_NORMAL);
+	mvwprintw(fenLog,0,COLS/2-13,"Appuyez sur q pour quitter");
 	wattron(fenLog,COLOR_PAIR(2)|A_NORMAL);
 
 	char **log_temp, **log_temp2;

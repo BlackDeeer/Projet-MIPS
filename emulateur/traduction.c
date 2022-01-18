@@ -2,6 +2,7 @@
 #include <string.h>
 #include "../fonctions/header/fichier.h"
 #include "../fonctions/header/conversion.h"
+#include "../fonctions/header/affichage.h"
 
 #define TAILLE_TABLE 175 /* Taille de la table d'instructions */
 
@@ -23,11 +24,23 @@ void decoupage_data(char * dataTxt, char * data [], char * separateurs){
 
 }
 
+char *table[TAILLE_TABLE]; /* Tableau qui va contenir toute la table d'instruction découpée */
+
+void init_table(char* table[]){
+	char tableTxt[600]; /* Table d'instruction en chaine de caractères */
+	char * separateurs_data = " ,\n\t\r"; /* On défini les séparateurs nécessaires à la découpe */
+	
+
+	/* Lecture de la table d'instruction */
+	lecture_fichier("table_instructions.txt",tableTxt); /* Stocke la table d'instruction en chaine de caractères */
+	decoupage_data(tableTxt,table,separateurs_data); /* Decoupage de la table d'instruction qui ira dans table */
+}
+
 
 /* ------------------------------------------------------ FONCTION TXT VERS HEXA --------------------------------------------- */
 
-void assembleur_str_to_hexa(char * assembleur_string, char hexa_operation[],char *table[], int ligne_courante){
-
+void assembleur_str_to_hexa(char * assembleur_string, char hexa_operation[],char *table[], int ligne_courante, int interactif){
+	
 	/* --- DECLARATION */
 
 	char *data[4]; /*Tableau qui va contenir les différents éléments de l'instruction : ["ADD","$1","$2","$3"] */
@@ -69,8 +82,13 @@ void assembleur_str_to_hexa(char * assembleur_string, char hexa_operation[],char
 
 	/* Si la recherche s'est arrêtée parce que k a dépassé la taille de la table alors l'instruction n'est pas reconnue : on le signale et quitte le programme */
 	if (k>TAILLE_TABLE){
-		fprintf(stderr,"ERREUR : L'instruction à la ligne %d n'est pas reconnue\n",ligne_courante);
-		exit(EXIT_FAILURE); 
+		if (interactif){
+			print_log("ERREUR : L'instruction n'est pas reconnue");
+			return;
+		} else {
+			fprintf(stderr,"ERREUR : L'instruction à la ligne %d n'est pas reconnue\n",ligne_courante);
+			exit(EXIT_FAILURE); 
+		}
 	}
 
 	/* On récupere dans la table des instructions les valeurs suivantes : */
@@ -107,11 +125,21 @@ void assembleur_str_to_hexa(char * assembleur_string, char hexa_operation[],char
 					++j;
 
 					if (data[table[k+3+i][1]-48][0]!='$'){
-						fprintf(stderr,"ERREUR : A la ligne %d, l'opérande n°%d doit être un registre ...\n",ligne_courante,table[k+3+i][1]-48);
-						exit(EXIT_FAILURE);
+						if (interactif){
+							sprintf(log_current,"ERREUR : L'opérande n°%d doit être un registre ...",table[k+3+i][1]-48);
+							print_log(log_current);
+						} else {
+							fprintf(stderr,"ERREUR : A la ligne %d, l'opérande n°%d doit être un registre ...\n",ligne_courante,table[k+3+i][1]-48);
+							exit(EXIT_FAILURE);
+						}
 					} else if (atoi(data[table[k+3+i][1]-48]+1)>63 || atoi(data[table[k+3+i][1]-48]+1)<0 ) {
-						fprintf(stderr,"ERREUR : A la ligne %d, le registre %d doit être compris entre 0 et 31 ...\n",ligne_courante,table[k+3+i][1]-48);
-						exit(EXIT_FAILURE);
+						if (interactif){
+							sprintf(log_current,"ERREUR : Le registre %d doit être compris entre 0 et 31 ...",table[k+3+i][1]-48);
+							print_log(log_current);
+						} else {
+							fprintf(stderr,"ERREUR : A la ligne %d, le registre %d doit être compris entre 0 et 31 ...\n",ligne_courante,table[k+3+i][1]-48);
+							exit(EXIT_FAILURE);
+						}
 					}
 
 
@@ -133,11 +161,20 @@ void assembleur_str_to_hexa(char * assembleur_string, char hexa_operation[],char
 					++j;
 
 					if (data[j][0]=='$'){
-						fprintf(stderr,"ERREUR : A la ligne %d, l'opérande n°%d doit être une valeur\n",ligne_courante,j);
-						exit(EXIT_FAILURE);
+						if (interactif){
+							sprintf(log_current,"ERREUR : L'opérande n°%d doit être un registre ...",j);
+							print_log(log_current);
+						} else {
+							fprintf(stderr,"ERREUR : A la ligne %d, l'opérande n°%d doit être une valeur\n",ligne_courante,j);
+							exit(EXIT_FAILURE);
+						}
 					} else if (atoi(data[j])>65535 || atoi(data[j])<-65536 ) {
-						fprintf(stderr,"ERREUR : A la ligne %d, la valeur immédiate doit être comprise entre -65536 et 65535\n",ligne_courante);
-						exit(EXIT_FAILURE);
+						if (interactif){
+							print_log("ERREUR : La valeur immédiate doit être comprise entre -65536 et 65535");
+						} else {
+							fprintf(stderr,"ERREUR : A la ligne %d, la valeur immédiate doit être comprise entre -65536 et 65535\n",ligne_courante);
+							exit(EXIT_FAILURE);
+						}
 					}
 
 					op[i] = atoi(data[j]); 
@@ -170,11 +207,19 @@ void assembleur_str_to_hexa(char * assembleur_string, char hexa_operation[],char
 					split = strtok(NULL,"()");
 
 					if (split[0]!='$'){
-						fprintf(stderr,"ERREUR : A la ligne %d, la base doit être un registre ...\n",ligne_courante);
-						exit(EXIT_FAILURE);
+						if (interactif){
+							print_log("ERREUR : La base doit être un registre ...");
+						} else {
+							fprintf(stderr,"ERREUR : A la ligne %d, la base doit être un registre ...\n",ligne_courante);
+							exit(EXIT_FAILURE);
+						}
 					} else if (atoi(split+1)>63 || atoi(split+1)<0 ) {
-						fprintf(stderr,"ERREUR : A la ligne %d, la base doit être compris entre 0 et 63 ...\n",ligne_courante);
-						exit(EXIT_FAILURE);
+						if (interactif){
+							print_log("ERREUR : La base doit être compris entre 0 et 63 ...");
+						} else {
+							fprintf(stderr,"ERREUR : A la ligne %d, la base doit être compris entre 0 et 63 ...\n",ligne_courante);
+							exit(EXIT_FAILURE);
+						}
 					}
 
 					op[i] = atoi(split+1);
@@ -191,11 +236,19 @@ void assembleur_str_to_hexa(char * assembleur_string, char hexa_operation[],char
 					*/
 
 					if (data[2][0]=='$'){
-						fprintf(stderr,"ERREUR : A la ligne %d, l'offset doit être une valeur\n",ligne_courante);
-						exit(EXIT_FAILURE);
+						if (interactif){
+							print_log("ERREUR : L'offset doit être une valeur ...");
+						} else {
+							fprintf(stderr,"ERREUR : A la ligne %d, l'offset doit être une valeur\n",ligne_courante);
+							exit(EXIT_FAILURE);
+						}
 					} else if (atoi(data[2])>32767 || atoi(data[2])<-32768 ) {
-						fprintf(stderr,"ERREUR : A la ligne %d, l'offset doit être comprise entre -32768 et 32767\n",ligne_courante);
-						exit(EXIT_FAILURE);
+						if (interactif){
+							print_log("ERREUR : L'offset doit être comprise entre -32768 et 32767");
+						} else {
+							fprintf(stderr,"ERREUR : A la ligne %d, l'offset doit être comprise entre -32768 et 32767\n",ligne_courante);
+							exit(EXIT_FAILURE);
+						}
 					}
 
 					op[i] = atoi(data[2]);
@@ -248,11 +301,21 @@ void assembleur_str_to_hexa(char * assembleur_string, char hexa_operation[],char
 			switch(table[k+3+i][0]){
 				case ('r') : 
 					if (data[table[k+3+i][1]-48][0]!='$'){
-						fprintf(stderr,"ERREUR : A la ligne %d, l'opérande n°%d doit être un registre ...\n",ligne_courante,table[k+3+i][1]-48);
-						exit(EXIT_FAILURE);
+						if (interactif){
+							sprintf(log_current,"ERREUR : L'opérande n°%d doit être un registre ...",table[k+3+i][1]-48);
+							print_log(log_current);
+						} else {
+							fprintf(stderr,"ERREUR : A la ligne %d, l'opérande n°%d doit être un registre ...\n",ligne_courante,table[k+3+i][1]-48);
+							exit(EXIT_FAILURE);
+						}
 					} else if (atoi(data[table[k+3+i][1]-48]+1)>63 || atoi(data[table[k+3+i][1]-48]+1)<0 ) {
-						fprintf(stderr,"ERREUR : A la ligne %d, le registre %d doit être compris entre 0 et 63 ...\n",ligne_courante,table[k+3+i][1]-48);
-						exit(EXIT_FAILURE);
+						if (interactif){
+							sprintf(log_current,"ERREUR : Le registre %d doit être compris entre 0 et 63 ...",table[k+3+i][1]-48);
+							print_log(log_current);
+						} else {
+							fprintf(stderr,"ERREUR : A la ligne %d, le registre %d doit être compris entre 0 et 63 ...\n",ligne_courante,table[k+3+i][1]-48);
+							exit(EXIT_FAILURE);
+						}
 					}
 					
 					op[i] = atoi(data[table[k+3+i][1]-48]+1);
@@ -263,11 +326,20 @@ void assembleur_str_to_hexa(char * assembleur_string, char hexa_operation[],char
 				case ('i') : 
 					++j;
 					if (data[j][0]=='$'){
-						fprintf(stderr,"ERREUR : A la ligne %d, l'opérande n°%d doit être une valeur\n",ligne_courante,j);
-						exit(EXIT_FAILURE);
+						if (interactif){
+							sprintf(log_current,"ERREUR : L'opérande n°%d doit être une valeur...",j);
+							print_log(log_current);
+						} else {
+							fprintf(stderr,"ERREUR : A la ligne %d, l'opérande n°%d doit être une valeur\n",ligne_courante,j);
+							exit(EXIT_FAILURE);
+						}
 					} else if (atoi(data[j])>31 || atoi(data[j])<0 ) {
-						fprintf(stderr,"ERREUR : A la ligne %d, la valeur immédiate doit être comprise entre 0 et 31\n",ligne_courante);
-						exit(EXIT_FAILURE);
+						if (interactif){
+							print_log("ERREUR : la valeur immédiate doit être comprise entre 0 et 31");
+						} else {
+							fprintf(stderr,"ERREUR : A la ligne %d, la valeur immédiate doit être comprise entre 0 et 31\n",ligne_courante);
+							exit(EXIT_FAILURE);
+						}
 					}
 					op[i] = atoi(data[j]); 
 					bin_taille = 5;
@@ -344,21 +416,19 @@ void assembleur_str_to_hexa(char * assembleur_string, char hexa_operation[],char
 }
 
 
+
+
 char** traduction(char* fichier, char* destHexa)
 {
 
 	/* --- DECLARATION */
 
-	char tableTxt[10000]; /* Table d'instruction en chaine de caractères */
-	char *table[TAILLE_TABLE]; /* Tableau qui va contenir toute la table d'instruction découpée */
 
-
-	char * separateurs_data; /* Contiendra les séparateurs nécessaire au découpége de données */
 	
 
-	char **tableauHexa; /* Contient les ligne d'instructions en hexa (limité à 200, peut être une allocation dynamique pour plus tard) */ 
+	char **tableauHexa = (char**) malloc(8); /* Contient les ligne d'instructions en hexa (limité à 200, peut être une allocation dynamique pour plus tard) */ 
     char **tableauHexa_temp;
-    char nbHexa;
+    int nbHexa;
 	int ligne_courante = 1; /* Compte les lignes du fichier assembleur txt */
 	int ligne_utiles = 0; /* Compte les vraies lignes utiles d'assembleur */
 
@@ -375,11 +445,7 @@ char** traduction(char* fichier, char* destHexa)
 	char *elementsLignes[100];
 
 
-	/* Lecture de la table d'instruction */
-	lecture_fichier("table_instructions.txt",tableTxt); /* Stocke la table d'instruction en chaine de caractères */
 
-	separateurs_data = " ,\n\t\r"; /* On défini les séparateurs nécessaires à la découpe */
-	decoupage_data(tableTxt,table,separateurs_data); /* Decoupage de la table d'instruction qui ira dans table */
 	
 	
 
@@ -445,14 +511,13 @@ char** traduction(char* fichier, char* destHexa)
 				printf("(%d) : %s",ligne_courante,ligne); /* affichage */
 
 				hexa_operation = malloc(8); /* Allocation de la mémoire pour l'opération finale en hexa */
-				assembleur_str_to_hexa(ligne, hexa_operation, table, ligne_courante); /* conversion de la ligne d'assembleur en hexa */
+				assembleur_str_to_hexa(ligne, hexa_operation, table, ligne_courante,0); /* conversion de la ligne d'assembleur en hexa */
 
                 nbHexa++;
-                tableauHexa = realloc(tableauHexa, (nbHexa+1)*8);
+                tableauHexa = realloc(tableauHexa, (nbHexa)*8);
                 tableauHexa_temp = tableauHexa;
                 tableauHexa_temp+=nbHexa-1;
                 *tableauHexa_temp = malloc(8);
-
 				strcpy(*tableauHexa_temp,hexa_operation);  /* Ajout à la table des lignes d'instruction en hexa*/
 				
 				printf("--> %s\n\n",hexa_operation); /* affichage */
@@ -476,18 +541,21 @@ char** traduction(char* fichier, char* destHexa)
 		strcpy(ligneMod,ligne);
 		decoupage_data(ligneMod,elementsLignes,"\t\0 ");
 		
+		
 		/* Pour la potentielle dernière ligne (en attendant de trouver un truc plus propre) */
 		if (ligne[0] != '\r' && ligne[0] != '\n' && ligne[0] != '#'  && elementsLignes[0][0]!='#' && elementsLignes[0]!=NULL){ /* si ce n'est pas un retour à la ligne, ou un commentaire seul */
 
 			
 			printf("(%d) : %s\n",ligne_courante,ligne); /* affichage */
-
+	
 			hexa_operation = malloc(8); /* Allocation de la mémoire pour l'opération finale en hexa */
-			assembleur_str_to_hexa(ligne, hexa_operation, table, ligne_courante); /* conversion de la ligne d'assembleur en hexa */
+			assembleur_str_to_hexa(ligne, hexa_operation, table, ligne_courante, 0); /* conversion de la ligne d'assembleur en hexa */
 			
             nbHexa++;
+			
             tableauHexa = realloc(tableauHexa, (nbHexa)*8);
             tableauHexa_temp = tableauHexa;
+			printf("%d\n",nbHexa);
             tableauHexa_temp+=nbHexa-1;
             *tableauHexa_temp = malloc(8);
             
@@ -514,17 +582,16 @@ char** traduction(char* fichier, char* destHexa)
     tableauHexa_temp = tableauHexa;
     tableauHexa_temp+=nbHexa-1;
     *tableauHexa_temp = malloc(8);
-
     strcpy(*tableauHexa_temp,"\0");  /* Ajout à la table des lignes d'instruction en hexa*/
 
 	/* Ecriture dans le fichier destination */
 
-
+	char resultat[] = "hexa/hexa_";
 	if (destHexa!=NULL){
 		ecriture_fichier(destHexa,tableauHexa,ligne_utiles);
 		printf("Ecriture dans '%s' OK\n",destHexa);
 	} else {
-		char resultat[] = "hexa/hexa_";
+		
 		strcat(resultat,fichier+6);
 		ecriture_fichier(resultat,tableauHexa,ligne_utiles);
 		printf("Ecriture dans '%s' OK\n",resultat);

@@ -1,74 +1,84 @@
-# Projet-MIPS
+# Explication du code de lecture d'instruction
 
-Projet de programmation C: Emulation MIPS[i]
-Le projet est à réaliser par groupes de 2 élèves.
+## Fonctionnement :
 
-Description du sujet
-Un émulateur est un logiciel capable de reproduire le comportement d'un objet. Dans le cas qui nous intéresse il s'agit de la machine (processeur) MIPS lorsqu'elle exécute un programme. Reproduire le comportement signifie, plus précisément, que l'émulateur gère une mémoire et des registres identiques à ceux de la machine MIPS, puis réalise l'évolution de l'état de cette mémoire et de ses registres au fur et à mesure que les instructions du programme s'exécutent. L'émulateur doit fournir les mêmes résultats que ceux que l'on obtiendrait avec une exécution sur une vraie machine MIPS.
+On récupère une instruction MIPS : `"ADD $1 $2 $3"`
 
-Le processeur MIPS, son architecture et ses instructions sont présentés en annexe.
+- On va découper le string en plusieurs parties comme ceci :
 
-Deux modes de fonctionnement de l'émulateur sont prévus:
+        data = ["ADD","$1","$2","$3"]
 
-·         Le mode dit interactif dans lequel chaque instruction MIPS est lue au clavier (entrée par l'utilisateur) et interprétée directement. La commande EXIT (non incluse dans le jeu des instructions MIPS) permet de quitter l'émulateur.
+    `data` est un tableau de pointeurs ou chaque pointeur correspond à la chaine de caractère découpée.
+    
 
-·         Le mode dit non-interactif dans lequel l'émulateur va lire les instructions une à une dans le fichier dont le nom (chemin d'accès) est passé en paramètre.
+- On va ensuite chercher l'opération `data[0] <=> "ADD"` dans une `table`
 
-Le projet sera réalisé sous linux. L'émulateur sera appelé en tapant la commande emul-mips :
+    La table d'instruction est un fichier texte contenant des informations sur la lecture des instructions :
 
-emul-mips en mode interactif
+        OPERATION opcode TYPE op1 op2 op3 op4
 
-Une fois cette commande lancée, le programme demande à l'utilisateur d'entrer une instruction, l'exécute et en demande une nouvelle et ainsi de suite jusqu'à lecture de EXIT. Dans ce mode, il ne sera possible d'exécuter que des instructions en séquence.
+    Pour le "ADD" on pourra trouver :
 
-emul-mips prog_filename  -pas en mode non-interactif
+        ADD 100000 R r2 r3 r1 0
 
-où prog_filename est le nom d'un fichier contenant le programme écrit en assembleur MIPS à exécuter. Si l'option  –pas est spécifiée, le programme doit être exécuté pas à pas (c'est-à-dire, demander à l'utilisateur de valider le passage à l'instruction suivante).
+    Comment lit-on cela ?
+    - l'instruction est de type "R" alors l'opération traduite sera sous cette forme
 
-Que ce soit en mode interactif ou bien dans le fichier programme, les instructions MIPS sont fournies (une par ligne) en langage assembleur (format texte).
+            | SPECIAL | ? | ? | ? | ? | OPCODE |
+            | 6  bits |   4 x 5 bits  | 6 bits |
 
-L'émulateur commence par afficher la traduction de l'instruction (ou bien la totalité du programme) sous forme hexadécimale. Par exemple, 2402000a est la représentation hexadécimale de l'instruction dont le format texte est  addiu $v0, $zero, 10.
+    - on a déja l'opcode en première position derrière le mot-clef de l'instruction (table[k+1])
+        on sait aussi que pour toutes nos instructions ici on aura SPECIAL = "000000"
+        alors :
 
-Ensuite, l'émulateur utilisera cette représentation hexadécimale pour exécuter l'instruction (ou le programme instruction par instruction). Après chaque instruction, l'émulateur va modifier l'état de l'architecture MIPS, c'est à dire les valeurs stockées dans les registres et dans la mémoire. La précision de votre émulateur est votre priorité principale. Plus précisément, assurez-vous que l'état architectural est correctement mis à jour après l'exécution de chaque instruction.
+            | 000000 | ? | ? | ? | ? | 100000 |
 
-Enfin, l'émulateur affichera le nouvel état (valeur des registres, contenu de la mémoire) avant d'exécuter l'instruction suivante.
+    - enfin on a des information sur l'organisation des éléments au centre :
 
-Afin de vérifier que votre émulateur fonctionne correctement, vous devez écrire plusieurs programmes à l'aide de toutes les instructions MIPS implémentées.  
+            | 000000 | r2 | r3 | r1 | 0 | 100000 |
 
-Travail demandé et planning
-Il vous est demandé d'écrire une application C qui réalise un émulateur du processeur MIPS. Cet émulateur reproduira le comportement de chaque instruction[ii] et permettra à l'utilisateur d'exécuter des programmes MIPS en observant  leurs sorties. La prise en compte des étiquettes et des directives n'est pas demandée.
+        - `rX` signifie que c'est la place du Xième registre de l'instruction, ici :
 
-Plus précisément, il vous est demandé d'effectuer dans l'ordre les tâches suivantes :
+                r1 <=> "$1"     r2 <=> "$2"     r3 <=> "$3"
+            (On prendra bien sur que les entières derrière le "$")
 
-1.       Ecrire des programmes MIPS qui vous serviront à tester votre application. Des exemples seront fournis dans un premier temps afin de familiariser avec la syntaxe de l'assembleur MIPS. Il est important de bien comprendre le rôle de chacune des instructions utilisées ! Cette étape est essentielle car elle vous permettra de prendre connaissance des spécifications MIPS. Vos programmes de tests devront contenir suffisamment de types d'instructions pour que vos tests soient efficaces. Un émulateur (projet de l'an passé) est disponible sur Chamilo afin de tester les codes.
 
-2.       Ecrire une première version de l'application permettant de traduire la forme textuelle des instructions MIPS en leur forme hexadécimale. Votre programme doit avoir deux paramètres : le nom du fichier contenant le programme MIPS et le nom du fichier qui contiendra le résultat de la traduction. A cette étape la traduction se fait d'un seul coup (pas de mode pas à pas ou interactif).
+        - `0` signie qu'on aura un vecteur de 5 bits nuls : `"00000"`
 
-3.      TESTER cette première version aves les tests fournis et construits lors de l'étape 1.
+        - `1` correspond à 1 codé sur 5 bits : `"00001"`
 
-Fournitures attendues : les programmes MIPS de l'étape 1, l'application que vous avez réalisée (zip du code source et de l'exécutable) et les résultats (sous forme de fichier texte) obtenus par les tests. Ces fournitures sont à déposer sur chamilo au plus tard à la fin de la troisième séance consacrée au projet. A noter que l'évaluation sera faite à partir des exemples fournis à l'étape 1, ainsi que deux autres programmes qui ne seront pas donnés à l'avance. .
+        - `b` signifie qu'une partie de l'instruction est sous la forme `offset(base)` on va isoler la base de l'offset
 
- 
+        - `o` on utilise la précédente découpe pour placer l'offset
 
-4.       Définir la structure de votre émulateur en termes de modules (un module est un ensemble cohérent de fonctions, définies à l'aide d'un fichier .h et d'un fichier .c). On définira au moins :
+    - on a finalement :
 
-a.       Un module gérant la mémoire  fournissant une fonction de lecture et une fonction d'écriture. Préciser la structure de données retenue pour représenter la mémoire et justifier votre choix.
+            | 000000 | 2 | 3 | 1 | 0 | 100000 |
 
-b.       Un module gérant les registres du processeur (fonctions de lecture et écriture).
+- Le programme effectue  cette lecture et convertit tout en binaire :
 
-Fourniture attendue : un document de quelques pages expliquant votre réflexion, ainsi que les headers (.h). Cette fourniture est à déposer sur chamilo au plus tard à la fin de la quatrième séance consacrée au projet. Des exemples de programmation modulaire seront donnés en cours. Ne pas hésiter à aller chercher plus d'exemples ou d'explications en ligne (https://openclassrooms.com/courses/apprenez-a-programmer-en-c/la-programmation-modulaire !).
+    `0b0000000001000011000010000010000`
 
- 
+- Pour enfin donner en hexadécimal :
 
-5.       Réaliser l'application finale conformément aux décisions de conception que vous avez prises à l'étape précédente (notamment les modes pas à pas et interactif). Si vous pensez ne pas avoir le temps de réaliser toutes les instructions MIPS, il est conseillé d'en retenir un sous ensemble permettant d'écrire des programmes significatifs (avec conditions, boucles…).
+    `0x00430820`
 
-6.       TESTER la version finale.
+On a préféré convertir d'abord tout en binaire plutot que de faire des décalages en décimal pour bien comprendre ce qu'il se passe.
 
-Fournitures attendues : l'application que vous avez réalisée (zip du code source et de l'exécutable) et les résultats (sous forme de fichier texte) obtenus par les tests. Un bilan est également demandé précisant les tâches effectuées par chaque membre de votre groupe.
+# Explication du main
 
- 
+Après avoir coder en hexadécimale notre ligne d'assembleur, il nous faut excécuter l'opération et modifier les registres et les mémoires en conséquences. 
 
-7.       (Optionnel) : modifier votre émulateur pour prendre en compte les étiquettes. Faire de nouveaux programmes MIPS de tests pour explorer cette nouvelle fonctionnalité.
+Première, on initialise les registres et la mémoire à zéro. 
 
-Fournitures optionnelles : la nouvelle version de l'application que vous avez réalisée (zip du code source et de l'exécutable), les nouveaux tests et les résultats (sous forme de fichier texte) obtenus par les anciens et nouveaux tests.
+Puis on traduit le code hexadécimal de l'opération en binaire. Il faut récupérer l'opcode de l'opération pour l'envoyer dans la bonne fonction du fichier opération. 
 
-A la fin de chaque séance du projet, mettre à jour le fichier d'avancement et le déposer sur le répertoire dédié de chamilo.
+Si les 6 premiers bits de l'opcode sont vide, alors l'opcode se situe à la fin de la traduction binaire. Puis en fonction de l'opcode, on envoie la traduction binaire dans les fonctions associées aux fonctions. 
+
+Dans chaque fonction, on découpe le binaire en fonction des données à récupérer.
+Par exemple, on prend la valeur du registre RS qui est compris entre les bits 6 à 11. On traduit ce petit tableau binaire en un entier. Puis on lit ce qui se trouve en registre avec la fonction lecture_reg. 
+
+On écrit enfin l'état des registres et mémoire dans un fichier text "state". 
+
+
+
